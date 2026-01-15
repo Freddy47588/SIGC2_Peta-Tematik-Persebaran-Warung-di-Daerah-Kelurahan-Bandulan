@@ -3,25 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#020617" />
   <title>Peta Persebaran Warung | Kelurahan Bandulan, Malang</title>
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* Smooth scroll */
+    /* Smooth scroll (tetap aman untuk mobile) */
     html { scroll-behavior: smooth; }
+
+    /* Biar tap highlight iOS/Android lebih halus */
+    * { -webkit-tap-highlight-color: transparent; }
+
+    /* Respect prefer-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reduce-motion\\:transition-none { transition: none !important; }
+      .reduce-motion\\:animate-none { animation: none !important; }
+    }
   </style>
 </head>
 
 <body class="bg-slate-950 text-slate-100">
-  <!-- ====== CONFIG (ganti URL web peta kamu di sini) ====== -->
+  <!-- ====== CONFIG ====== -->
   <script>
-    const WEB_PETA_URL = "https://freddy47588.github.io/QgisWeb_Peta-Tematik-Persebaran-Warung-di-Daerah-Kelurahan-Bandulan/"; // <-- GANTI INI
+    const WEB_PETA_URL =
+      "https://freddy47588.github.io/QgisWeb_Peta-Tematik-Persebaran-Warung-di-Daerah-Kelurahan-Bandulan/";
   </script>
 
   <!-- ====== NAVBAR ====== -->
-  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur">
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur reduce-motion:transition-none">
     <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
       <a href="#" class="flex items-center gap-2">
         <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
@@ -33,22 +45,26 @@
         </div>
       </a>
 
+      <!-- Desktop nav -->
       <nav class="hidden items-center gap-6 md:flex">
         <a href="#tentang" class="text-sm text-slate-300 hover:text-white">Tentang</a>
         <a href="#abstrak" class="text-sm text-slate-300 hover:text-white">Abstrak</a>
         <a href="#tujuan" class="text-sm text-slate-300 hover:text-white">Tujuan & Manfaat</a>
-        <a href="#layout" class="text-sm text-slate-300 hover:text-white">Layout Peta</a>
+        <a href="#layout" class="text-sm text-slate-300 hover:text-white">Layout</a>
         <a href="#preview" class="text-sm text-slate-300 hover:text-white">Preview</a>
       </nav>
 
+      <!-- Actions -->
       <div class="flex items-center gap-2">
+        <!-- Secondary CTA (desktop only) -->
         <button
           onclick="scrollToPreview()"
-          class="hidden rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15 md:inline-flex"
+          class="hidden rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10 md:inline-flex"
         >
           Lihat Preview
         </button>
 
+        <!-- Primary CTA -->
         <a
           id="btnKePetaTop"
           href="#"
@@ -59,19 +75,62 @@
           Buka Web Peta
           <span aria-hidden="true">↗</span>
         </a>
+
+        <!-- Mobile menu button (lebih besar biar enak disentuh) -->
+        <button
+          id="btnMenu"
+          class="inline-flex items-center justify-center rounded-xl bg-white/5 px-3 py-2 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/10 md:hidden"
+          aria-label="Buka menu"
+          aria-expanded="false"
+          aria-controls="mobileNav"
+        >
+          ☰
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile nav panel -->
+    <div id="mobileNav" class="hidden border-t border-white/10 bg-slate-950/90 md:hidden">
+      <div class="mx-auto max-w-6xl px-4 py-3">
+        <div class="flex flex-col gap-2">
+          <a href="#tentang" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Tentang</a>
+          <a href="#abstrak" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Abstrak</a>
+          <a href="#tujuan" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Tujuan & Manfaat</a>
+          <a href="#layout" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Layout</a>
+          <a href="#preview" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Preview</a>
+
+          <!-- Quick actions on mobile -->
+          <div class="mt-2 grid grid-cols-2 gap-2">
+            <button
+              onclick="scrollToPreview(); closeMobileNav();"
+              class="rounded-xl bg-white/5 px-3 py-2 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+            >
+              Lihat Preview
+            </button>
+            <a
+              id="btnKePetaMobile"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
+            >
+              Buka Peta ↗
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- ====== HERO ====== -->
   <section class="relative">
-    <div class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 -z-10 pointer-events-none">
       <div class="absolute -top-32 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/20 blur-3xl"></div>
       <div class="absolute -bottom-40 left-10 h-[380px] w-[380px] rounded-full bg-cyan-500/10 blur-3xl"></div>
       <div class="absolute -bottom-52 right-10 h-[420px] w-[420px] rounded-full bg-fuchsia-500/10 blur-3xl"></div>
     </div>
 
-    <div class="mx-auto max-w-6xl px-4 py-14 md:py-20">
+    <div class="mx-auto max-w-6xl px-4 py-12 md:py-20">
       <div class="grid items-center gap-10 md:grid-cols-2">
         <div>
           <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
@@ -80,16 +139,17 @@
           </p>
 
           <h1 class="mt-4 text-3xl font-extrabold tracking-tight md:text-5xl">
-            Peta Persebaran Warung</span><br />
+            Peta Persebaran Warung<br />
             Kelurahan Bandulan, Malang
           </h1>
 
           <p class="mt-4 text-slate-300">
-            Visualisasi lokasi warung, jaringan jalan, serta konteks penggunaan lahan untuk membantu
-            pemetaan layanan masyarakat dan pemahaman pola aktivitas ekonomi skala mikro di Bandulan.
+            Visualisasi lokasi warung, jaringan jalan, serta konteks lingkungan untuk membantu pemetaan layanan masyarakat
+            dan memahami pola aktivitas ekonomi skala mikro di Bandulan.
           </p>
 
           <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+            <!-- Primary CTA -->
             <a
               id="btnKePetaHero"
               href="#"
@@ -101,13 +161,14 @@
               <span aria-hidden="true">↗</span>
             </a>
 
-            <a
-              href="#tentang"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-6 py-3 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15"
+            <!-- Secondary CTA -->
+            <button
+              onclick="scrollToPreview()"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/5 px-6 py-3 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
             >
-              Pelajari Selengkapnya
+              Lihat Preview
               <span aria-hidden="true">↓</span>
-            </a>
+            </button>
           </div>
 
           <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -128,6 +189,11 @@
               <p class="mt-1 text-sm font-semibold">Persebaran</p>
             </div>
           </div>
+
+          <!-- Mobile-only hint -->
+          <p class="mt-4 text-xs text-slate-400 md:hidden">
+            Tip: Untuk layar HP, gunakan tombol <span class="text-slate-200 font-semibold">Buka Web Peta</span> agar peta lebih nyaman.
+          </p>
         </div>
 
         <!-- Hero card -->
@@ -140,42 +206,39 @@
           <div class="mt-4 space-y-3 text-sm text-slate-300">
             <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
               <p class="font-semibold text-slate-200">Apa yang ditampilkan?</p>
-              <p class="mt-1">
-                Titik lokasi warung, klasifikasi jalan (desa/perumahan/gang), sungai, serta bangunan & pemukiman.
-              </p>
+              <p class="mt-1">Titik lokasi warung, klasifikasi jalan, sungai, serta bangunan & pemukiman.</p>
             </div>
 
             <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
               <p class="font-semibold text-slate-200">Untuk siapa?</p>
-              <p class="mt-1">
-                Warga, perangkat kelurahan, mahasiswa, dan peneliti yang membutuhkan pemetaan layanan warung.
-              </p>
+              <p class="mt-1">Warga, perangkat kelurahan, mahasiswa, dan peneliti yang membutuhkan WebGIS.</p>
             </div>
 
             <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
-              <p class="font-semibold text-slate-200">Apa manfaatnya?</p>
-              <p class="mt-1">
-                Mendukung pengambilan keputusan, identifikasi area padat layanan, dan perencanaan rute akses.
-              </p>
+              <p class="font-semibold text-slate-200">Manfaat</p>
+              <p class="mt-1">Pemetaan layanan, identifikasi area padat layanan, dan perencanaan akses.</p>
             </div>
           </div>
 
-          <div class="mt-5 flex gap-3">
-            <button
-              onclick="scrollToPreview()"
-              class="flex-1 rounded-2xl bg-white/10 px-4 py-3 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15"
-            >
-              Lihat Preview Web Peta
-            </button>
+          <!-- Mobile CTA inside card (lebih gampang dijangkau di layar kecil) -->
+          <div class="mt-5 md:hidden">
             <a
-              id="btnKePetaCard"
+              id="btnKePetaCardMobile"
               href="#"
               target="_blank"
               rel="noopener"
-              class="flex-1 rounded-2xl bg-indigo-500 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-indigo-400"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
             >
               Buka Web Peta
+              <span aria-hidden="true">↗</span>
             </a>
+            <button
+              onclick="scrollToPreview()"
+              class="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+            >
+              Lihat Preview
+              <span aria-hidden="true">↓</span>
+            </button>
           </div>
         </div>
       </div>
@@ -183,17 +246,16 @@
   </section>
 
   <!-- ====== TENTANG ====== -->
-  <section id="tentang" class="mx-auto max-w-6xl px-4 py-14">
-    <div class="grid gap-8 md:grid-cols-2">
+  <section id="tentang" class="mx-auto max-w-6xl px-4 py-12 md:py-14">
+    <div class="grid gap-6 md:gap-8 md:grid-cols-2">
       <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
         <h2 class="text-xl font-bold">Tentang Peta</h2>
         <p class="mt-3 text-slate-300">
           Kelurahan Bandulan berada di Kecamatan Sukun, Kota Malang. Wilayahnya didominasi kawasan permukiman
-          dan aktivitas harian warga, sehingga warung umumnya tersebar di sepanjang jalan utama dan area
-          permukiman padat.
+          dan aktivitas harian warga, sehingga warung umumnya tersebar di sepanjang jalan utama dan area permukiman padat.
         </p>
         <p class="mt-3 text-slate-300">
-          Landing page ini menampilkan ringkasan informasi dan menyediakan akses cepat ke web peta interaktif.
+          Landing page ini menampilkan ringkasan informasi dan akses cepat menuju web peta interaktif.
         </p>
       </div>
 
@@ -225,7 +287,7 @@
             <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">🌊</span>
             <div>
               <p class="font-semibold text-slate-200">Sungai & Elemen Pendukung</p>
-              <p class="text-sm">Fitur hidrologi dan penggunaan lahan (jika ada).</p>
+              <p class="text-sm">Fitur hidrologi dan elemen pendukung lainnya.</p>
             </div>
           </li>
         </ul>
@@ -234,7 +296,7 @@
   </section>
 
   <!-- ====== ABSTRAK ====== -->
-  <section id="abstrak" class="mx-auto max-w-6xl px-4 pb-14">
+  <section id="abstrak" class="mx-auto max-w-6xl px-4 pb-12 md:pb-14">
     <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
       <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <h2 class="text-xl font-bold">Abstrak</h2>
@@ -253,7 +315,7 @@
   </section>
 
   <!-- ====== TUJUAN & MANFAAT ====== -->
-  <section id="tujuan" class="mx-auto max-w-6xl px-4 pb-14">
+  <section id="tujuan" class="mx-auto max-w-6xl px-4 pb-12 md:pb-14">
     <div class="grid gap-6 md:grid-cols-2">
       <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
         <h2 class="text-xl font-bold">Tujuan</h2>
@@ -261,7 +323,7 @@
           <li>Memetakan dan menampilkan titik persebaran warung di Kelurahan Bandulan.</li>
           <li>Menunjukkan hubungan lokasi warung dengan jaringan jalan (desa/perumahan/gang).</li>
           <li>Menyediakan media eksplorasi berbasis web untuk akses informasi spasial secara cepat.</li>
-          <li>Mendukung kebutuhan analisis sederhana terkait layanan ekonomi mikro di wilayah permukiman.</li>
+          <li>Mendukung analisis sederhana terkait layanan ekonomi mikro di wilayah permukiman.</li>
         </ol>
       </div>
 
@@ -277,11 +339,20 @@
     </div>
   </section>
 
-  <!-- ====== LAYOUT PETA (GAMBAR) ====== -->
-  <section id="layout" class="mx-auto max-w-6xl px-4 pb-14">
+  <!-- ====== LAYOUT ====== -->
+  <section id="layout" class="mx-auto max-w-6xl px-4 pb-12 md:pb-14">
     <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
       <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <h2 class="text-xl font-bold">Tampilan Layout Peta</h2>
+        <a
+          id="btnKePetaLayout"
+          href="#"
+          target="_blank"
+          rel="noopener"
+          class="text-sm font-semibold text-indigo-400 hover:text-indigo-300"
+        >
+          Lihat versi interaktif →
+        </a>
       </div>
 
       <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/20">
@@ -289,33 +360,25 @@
           src="images/Layout_Peta_Bandulan.png"
           alt="Layout Peta Persebaran Warung Kelurahan Bandulan"
           class="h-auto w-full"
+          loading="lazy"
         />
       </div>
 
-      <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p class="text-sm text-slate-300">
-          Layout peta menampilkan batas kelurahan, titik lokasi warung, jaringan jalan, serta elemen pendukung.
-        </p>
-        <a
-          id="btnKePetaLayout"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
-        >
-          Lihat Versi Interaktif
-          <span aria-hidden="true">↗</span>
-        </a>
-      </div>
+      <p class="mt-5 text-sm text-slate-300">
+        Layout peta menampilkan batas kelurahan, titik lokasi warung, jaringan jalan, serta elemen pendukung.
+      </p>
     </div>
   </section>
 
-  <!-- ====== PREVIEW WEB PETA (IFRAME) ====== -->
+  <!-- ====== PREVIEW (AUTO LOAD) ====== -->
   <section id="preview" class="mx-auto max-w-6xl px-4 pb-16">
     <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
       <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h2 class="text-xl font-bold">Preview Web Peta</h2>
+          <p class="mt-1 text-sm text-slate-300">
+            Jika di HP preview terasa sempit, gunakan tombol <span class="font-semibold text-slate-200">“Buka Web Peta”</span>.
+          </p>
         </div>
 
         <a
@@ -330,20 +393,46 @@
         </a>
       </div>
 
+      <!-- Optimasi mobile:
+           - aspect untuk desktop tetap 16:9
+           - di mobile kasih tinggi minimum biar enak (tanpa bikin scroll terlalu panjang) -->
       <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-        <div class="aspect-[16/9] w-full">
+        <div class="w-full">
           <iframe
             id="iframePeta"
             title="Preview Web Peta Bandulan"
             src="about:blank"
-            class="h-full w-full"
-            loading="lazy"
+            class="w-full border-0
+                   h-[520px] sm:h-[560px] md:aspect-[16/9] md:h-auto"
+            loading="eager"
             referrerpolicy="no-referrer"
           ></iframe>
         </div>
       </div>
 
-      
+      <!-- Mobile helper bar (sticky bottom inside section, optional and ringan) -->
+      <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs text-slate-400">
+          ⓘ Di beberapa browser, interaksi peta di iframe lebih nyaman setelah dibuka full tab.
+        </p>
+        <div class="flex gap-2">
+          <button
+            onclick="scrollToTop(event)"
+            class="rounded-xl bg-white/5 px-3 py-2 text-xs font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+          >
+            Ke Atas ↑
+          </button>
+          <a
+            id="btnKePetaPreviewMini"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            class="rounded-xl bg-indigo-500 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-400"
+          >
+            Buka Peta ↗
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -356,38 +445,29 @@
           <p class="text-sm text-slate-300">Institut Teknologi dan Bisnis Asia Malang</p>
         </div>
 
-        <div class="flex gap-2">
-          <a
-            href="#"
-            onclick="openWebPeta(event)"
-            class="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
-          >
-            Buka Web Peta
-            <span aria-hidden="true">↗</span>
-          </a>
-          <a
-            href="#"
-            onclick="scrollToTop(event)"
-            class="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15"
-          >
-            Kembali ke Atas
-            <span aria-hidden="true">↑</span>
-          </a>
-        </div>
+        <a
+          href="#"
+          onclick="scrollToTop(event)"
+          class="inline-flex items-center gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+        >
+          Kembali ke Atas
+          <span aria-hidden="true">↑</span>
+        </a>
       </div>
     </div>
   </footer>
 
   <!-- ====== SCRIPT ====== -->
   <script>
-    // Set semua tombol menuju web peta + iframe preview
     function initLinks() {
       const ids = [
         "btnKePetaTop",
         "btnKePetaHero",
-        "btnKePetaCard",
-        "btnKePetaLayout",
         "btnKePetaPreview",
+        "btnKePetaLayout",
+        "btnKePetaMobile",
+        "btnKePetaCardMobile",
+        "btnKePetaPreviewMini",
       ];
 
       ids.forEach((id) => {
@@ -395,8 +475,9 @@
         if (el) el.href = WEB_PETA_URL;
       });
 
+      // AUTO LOAD preview
       const iframe = document.getElementById("iframePeta");
-      if (iframe) iframe.src = WEB_PETA_URL; // embed preview
+      if (iframe) iframe.src = WEB_PETA_URL;
     }
 
     function scrollToPreview() {
@@ -405,14 +486,41 @@
     }
 
     function scrollToTop(e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function openWebPeta(e) {
-      e.preventDefault();
-      window.open(WEB_PETA_URL, "_blank", "noopener,noreferrer");
+    // Mobile nav helpers (optimasi UX mobile)
+    function closeMobileNav() {
+      const mobileNav = document.getElementById("mobileNav");
+      const btnMenu = document.getElementById("btnMenu");
+      if (mobileNav) mobileNav.classList.add("hidden");
+      if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
     }
+
+    // Mobile menu toggle
+    (function setupMobileNav() {
+      const btnMenu = document.getElementById("btnMenu");
+      const mobileNav = document.getElementById("mobileNav");
+      if (!btnMenu || !mobileNav) return;
+
+      btnMenu.addEventListener("click", () => {
+        const isHidden = mobileNav.classList.toggle("hidden");
+        btnMenu.setAttribute("aria-expanded", String(!isHidden));
+      });
+
+      // Auto close menu when click a link
+      mobileNav.querySelectorAll("a").forEach((a) => {
+        a.addEventListener("click", () => closeMobileNav());
+      });
+
+      // Close when tap outside (biar feels native)
+      document.addEventListener("click", (e) => {
+        const target = e.target;
+        const clickedInside = mobileNav.contains(target) || btnMenu.contains(target);
+        if (!clickedInside) closeMobileNav();
+      });
+    })();
 
     initLinks();
   </script>
