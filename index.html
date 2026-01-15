@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peta Persebaran Warung | Kelurahan Bandulan, Malang</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100">
+  <!-- ====== CONFIG (ganti URL web peta kamu di sini) ====== -->
+  <script>
+    const WEB_PETA_URL = "https://contoh-domainmu.com/webpeta-bandulan"; // <-- GANTI INI
+  </script>
+
+  <!-- ====== NAVBAR ====== -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+      <a href="#" class="flex items-center gap-2">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
+          🗺️
+        </span>
+        <div class="leading-tight">
+          <p class="text-sm font-semibold">Peta Persebaran Warung</p>
+          <p class="text-xs text-slate-300">Kelurahan Bandulan • Kota Malang</p>
+        </div>
+      </a>
+
+      <nav class="hidden items-center gap-6 md:flex">
+        <a href="#tentang" class="text-sm text-slate-300 hover:text-white">Tentang</a>
+        <a href="#abstrak" class="text-sm text-slate-300 hover:text-white">Abstrak</a>
+        <a href="#tujuan" class="text-sm text-slate-300 hover:text-white">Tujuan & Manfaat</a>
+        <a href="#layout" class="text-sm text-slate-300 hover:text-white">Layout Peta</a>
+        <a href="#preview" class="text-sm text-slate-300 hover:text-white">Preview</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button
+          onclick="scrollToPreview()"
+          class="hidden rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15 md:inline-flex"
+        >
+          Lihat Preview
+        </button>
+
+        <a
+          id="btnKePetaTop"
+          href="#"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
+        >
+          Buka Web Peta
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====== HERO ====== -->
+  <section class="relative">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute -top-32 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/20 blur-3xl"></div>
+      <div class="absolute -bottom-40 left-10 h-[380px] w-[380px] rounded-full bg-cyan-500/10 blur-3xl"></div>
+      <div class="absolute -bottom-52 right-10 h-[420px] w-[420px] rounded-full bg-fuchsia-500/10 blur-3xl"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 py-14 md:py-20">
+      <div class="grid items-center gap-10 md:grid-cols-2">
+        <div>
+          <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
+            <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+            Data spasial • Warung • Bandulan
+          </p>
+
+          <h1 class="mt-4 text-3xl font-extrabold tracking-tight md:text-5xl">
+            Landing Page <span class="text-indigo-300">Peta Persebaran Warung</span><br />
+            Kelurahan Bandulan, Malang
+          </h1>
+
+          <p class="mt-4 text-slate-300">
+            Visualisasi lokasi warung, jaringan jalan, serta konteks penggunaan lahan untuk membantu
+            pemetaan layanan masyarakat dan pemahaman pola aktivitas ekonomi skala mikro di Bandulan.
+          </p>
+
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a
+              id="btnKePetaHero"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
+            >
+              Buka Web Peta Interaktif
+              <span aria-hidden="true">↗</span>
+            </a>
+
+            <a
+              href="#tentang"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/10 px-6 py-3 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15"
+            >
+              Pelajari Selengkapnya
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+
+          <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-xs text-slate-300">Cakupan</p>
+              <p class="mt-1 text-sm font-semibold">Kel. Bandulan</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-xs text-slate-300">Sumber</p>
+              <p class="mt-1 text-sm font-semibold">OSM • Maps</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-xs text-slate-300">Output</p>
+              <p class="mt-1 text-sm font-semibold">Layout + Web</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <p class="text-xs text-slate-300">Fokus</p>
+              <p class="mt-1 text-sm font-semibold">Persebaran</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero card -->
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-black/30">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-semibold">Ringkasan Konten</p>
+            <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">Bandulan • Malang</span>
+          </div>
+
+          <div class="mt-4 space-y-3 text-sm text-slate-300">
+            <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
+              <p class="font-semibold text-slate-200">Apa yang ditampilkan?</p>
+              <p class="mt-1">
+                Titik lokasi warung, klasifikasi jalan (desa/perumahan/gang), sungai, serta bangunan & pemukiman.
+              </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
+              <p class="font-semibold text-slate-200">Untuk siapa?</p>
+              <p class="mt-1">
+                Warga, perangkat kelurahan, mahasiswa, dan peneliti yang membutuhkan pemetaan layanan warung.
+              </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
+              <p class="font-semibold text-slate-200">Apa manfaatnya?</p>
+              <p class="mt-1">
+                Mendukung pengambilan keputusan, identifikasi area padat layanan, dan perencanaan rute akses.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-5 flex gap-3">
+            <button
+              onclick="scrollToPreview()"
+              class="flex-1 rounded-2xl bg-white/10 px-4 py-3 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15"
+            >
+              Lihat Preview Web Peta
+            </button>
+            <a
+              id="btnKePetaCard"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              class="flex-1 rounded-2xl bg-indigo-500 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-indigo-400"
+            >
+              Buka Web Peta
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== TENTANG ====== -->
+  <section id="tentang" class="mx-auto max-w-6xl px-4 py-14">
+    <div class="grid gap-8 md:grid-cols-2">
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-xl font-bold">Tentang Peta</h2>
+        <p class="mt-3 text-slate-300">
+          Kelurahan Bandulan berada di Kecamatan Sukun, Kota Malang. Wilayahnya didominasi kawasan permukiman
+          dan aktivitas harian warga, sehingga warung umumnya tersebar di sepanjang jalan utama dan area
+          permukiman padat.
+        </p>
+        <p class="mt-3 text-slate-300">
+          Landing page ini menampilkan ringkasan informasi dan menyediakan akses cepat ke web peta interaktif.
+        </p>
+      </div>
+
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-xl font-bold">Komponen Data yang Ditampilkan</h2>
+        <ul class="mt-4 space-y-3 text-slate-300">
+          <li class="flex gap-3">
+            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">📍</span>
+            <div>
+              <p class="font-semibold text-slate-200">Lokasi Warung</p>
+              <p class="text-sm">Titik koordinat warung di Bandulan.</p>
+            </div>
+          </li>
+          <li class="flex gap-3">
+            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">🛣️</span>
+            <div>
+              <p class="font-semibold text-slate-200">Klasifikasi Jalan</p>
+              <p class="text-sm">Jalan desa, jalan perumahan, dan jalan gang.</p>
+            </div>
+          </li>
+          <li class="flex gap-3">
+            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">🏠</span>
+            <div>
+              <p class="font-semibold text-slate-200">Bangunan & Pemukiman</p>
+              <p class="text-sm">Konteks lingkungan sekitar warung.</p>
+            </div>
+          </li>
+          <li class="flex gap-3">
+            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">🌊</span>
+            <div>
+              <p class="font-semibold text-slate-200">Sungai & Elemen Pendukung</p>
+              <p class="text-sm">Fitur hidrologi dan penggunaan lahan (jika ada).</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ABSTRAK ====== -->
+  <section id="abstrak" class="mx-auto max-w-6xl px-4 pb-14">
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+      <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <h2 class="text-xl font-bold">Abstrak</h2>
+        <p class="text-xs text-slate-400">Ringkasan penelitian/pemetaan</p>
+      </div>
+
+      <p class="mt-4 text-slate-300">
+        Pemetaan persebaran warung di Kelurahan Bandulan bertujuan untuk memvisualisasikan lokasi warung
+        dalam konteks jaringan jalan dan penggunaan lahan. Hasil pemetaan disajikan dalam bentuk layout peta
+        serta web peta interaktif, sehingga pengguna dapat mengeksplorasi sebaran warung, memahami pola
+        kedekatan dengan ruas jalan utama maupun gang, dan mengidentifikasi area permukiman yang padat layanan.
+        Informasi ini dapat dimanfaatkan untuk dukungan perencanaan wilayah, aksesibilitas layanan, serta
+        kebutuhan kajian akademik berbasis GIS.
+      </p>
+    </div>
+  </section>
+
+  <!-- ====== TUJUAN & MANFAAT ====== -->
+  <section id="tujuan" class="mx-auto max-w-6xl px-4 pb-14">
+    <div class="grid gap-6 md:grid-cols-2">
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-xl font-bold">Tujuan</h2>
+        <ol class="mt-4 list-decimal space-y-2 pl-5 text-slate-300">
+          <li>Memetakan dan menampilkan titik persebaran warung di Kelurahan Bandulan.</li>
+          <li>Menunjukkan hubungan lokasi warung dengan jaringan jalan (desa/perumahan/gang).</li>
+          <li>Menyediakan media eksplorasi berbasis web untuk akses informasi spasial secara cepat.</li>
+          <li>Mendukung kebutuhan analisis sederhana terkait layanan ekonomi mikro di wilayah permukiman.</li>
+        </ol>
+      </div>
+
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-xl font-bold">Manfaat</h2>
+        <ul class="mt-4 space-y-2 text-slate-300">
+          <li>✅ Memudahkan warga menemukan warung terdekat di sekitar area tempat tinggal.</li>
+          <li>✅ Menjadi referensi perangkat kelurahan untuk pemetaan layanan dan potensi UMKM.</li>
+          <li>✅ Mendukung tugas akademik (GIS/QGIS/WebGIS) dengan output layout & web map.</li>
+          <li>✅ Membantu analisis aksesibilitas dan pemerataan layanan berdasarkan kepadatan permukiman.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== LAYOUT PETA (GAMBAR) ====== -->
+  <section id="layout" class="mx-auto max-w-6xl px-4 pb-14">
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+      <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <h2 class="text-xl font-bold">Tampilan Layout Peta</h2>
+        <p class="text-xs text-slate-400">
+          Pastikan file <span class="font-semibold text-slate-200">Layout_Peta_Bandulan.png</span> berada di folder yang sama.
+        </p>
+      </div>
+
+      <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/20">
+        <img
+          src="images/Layout_Peta_Bandulan.png"
+          alt="Layout Peta Persebaran Warung Kelurahan Bandulan"
+          class="h-auto w-full"
+        />
+      </div>
+
+      <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-sm text-slate-300">
+          Layout peta menampilkan batas kelurahan, titik lokasi warung, jaringan jalan, serta elemen pendukung.
+        </p>
+        <a
+          id="btnKePetaLayout"
+          href="#"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
+        >
+          Lihat Versi Interaktif
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PREVIEW WEB PETA (IFRAME) ====== -->
+  <section id="preview" class="mx-auto max-w-6xl px-4 pb-16">
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
+      <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 class="text-xl font-bold">Preview Web Peta</h2>
+        </div>
+
+        <a
+          id="btnKePetaPreview"
+          href="#"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
+        >
+          Buka Web Peta
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+        <div class="aspect-[16/9] w-full">
+          <iframe
+            id="iframePeta"
+            title="Preview Web Peta Bandulan"
+            src="about:blank"
+            class="h-full w-full"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-5">
+          <p class="text-sm font-semibold">Eksplorasi Mudah</p>
+          <p class="mt-1 text-sm text-slate-300">Zoom, pan, dan lihat konteks jaringan jalan sekitar.</p>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-5">
+          <p class="text-sm font-semibold">Lebih Informatif</p>
+          <p class="mt-1 text-sm text-slate-300">Cocok untuk laporan, presentasi, dan dokumentasi GIS.</p>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-5">
+          <p class="text-sm font-semibold">Akses Cepat</p>
+          <p class="mt-1 text-sm text-slate-300">Satu tombol untuk langsung menuju web peta interaktif.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="border-t border-white/10 bg-slate-950">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="text-sm font-semibold">Disusun oleh: Fredi Irawan (23201276)</p>
+          <p class="text-sm text-slate-300">Institut Teknologi dan Bisnis Asia Malang</p>
+        </div>
+
+        <div class="flex gap-2">
+          <a
+            href="#"
+            onclick="openWebPeta(event)"
+            class="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
+          >
+            Buka Web Peta
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            href="#"
+            onclick="scrollToTop(event)"
+            class="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/15"
+          >
+            Kembali ke Atas
+            <span aria-hidden="true">↑</span>
+          </a>
+        </div>
+      </div>
+
+      <p class="mt-6 text-xs text-slate-500">
+        Sumber data dapat mencakup OpenStreetMap, Google Maps, dan Google Earth Pro (sesuai kebutuhan pemetaan).
+      </p>
+    </div>
+  </footer>
+
+  <!-- ====== SCRIPT ====== -->
+  <script>
+    // Set semua tombol menuju web peta + iframe preview
+    function initLinks() {
+      const ids = [
+        "btnKePetaTop",
+        "btnKePetaHero",
+        "btnKePetaCard",
+        "btnKePetaLayout",
+        "btnKePetaPreview",
+      ];
+
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.href = WEB_PETA_URL;
+      });
+
+      const iframe = document.getElementById("iframePeta");
+      if (iframe) iframe.src = WEB_PETA_URL; // embed preview
+    }
+
+    function scrollToPreview() {
+      const el = document.getElementById("preview");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function scrollToTop(e) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openWebPeta(e) {
+      e.preventDefault();
+      window.open(WEB_PETA_URL, "_blank", "noopener,noreferrer");
+    }
+
+    initLinks();
+  </script>
+</body>
+</html>
