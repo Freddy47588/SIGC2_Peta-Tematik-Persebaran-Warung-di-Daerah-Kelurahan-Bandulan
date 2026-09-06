@@ -5,6 +5,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 100px; }
 .nav-links { display: flex; align-items: center; gap: 30px; color: var(--muted); font-size: 13px; }
 .nav-links a:hover { color: var(--text); }
 .nav-actions { display: flex; gap: 8px; }
+.nav-actions > .language-selector { margin-right: 4px; }
 .menu-toggle { display: none; }
 .mobile-nav { border-top: 1px solid var(--line); padding: 12px 24px; }
 .mobile-nav a { display: block; padding: 13px 0; }
@@ -76,6 +77,8 @@ h3 { font-size: 16px; font-weight: 550; margin: 0 0 12px; letter-spacing: -.015e
   .hero-grid { gap: 30px; }
   .nav-links { gap: 18px; }
   .overview { gap: 40px; }
+  .nav-links { display: none; }
+  .menu-toggle { display: inline-flex; }
 }
 @media (max-width: 800px) {
   .nav-links { display: none; }
@@ -96,6 +99,8 @@ h3 { font-size: 16px; font-weight: 550; margin: 0 0 12px; letter-spacing: -.015e
 @media (max-width: 480px) {
   .container { width: calc(100% - 32px); }
   .nav-bar { gap: 8px; }
+  .nav-actions > .button-primary { display: none; }
+  .nav-actions > .language-selector { margin-right: 0; }
   .brand { font-size: 13px; gap: 8px; }
   .brand-mark { width: 32px; height: 36px; }
   .nav-actions > .button-primary { padding-inline: 12px; font-size: 12px; }

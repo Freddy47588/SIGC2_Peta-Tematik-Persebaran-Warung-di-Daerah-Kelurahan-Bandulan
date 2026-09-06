@@ -1,9 +1,10 @@
 /* global L, map, bandulanLayers, bandulanFields, layer_OpenStreetMap_0,
           layer_LokasiWarung_11, layer_BatasKelurahan_1, layer_JalanDesa_10,
-          highlightFeature */
+          highlightFeature, bandulanInitialHash */
 "use strict";
 
 (() => {
+  const { t, bind } = window.BandulanI18n;
   const sidebar = document.getElementById("map-sidebar");
   const backdrop = document.getElementById("sidebar-backdrop");
   const layersButton = document.getElementById("layers-toggle");
@@ -17,10 +18,12 @@
   const status = document.getElementById("map-status");
   let drawerOpener = layersButton;
   let statusTimeout;
+  let statusKey;
 
-  function announce(message, persistent = false) {
+  function announce(key, persistent = false) {
     clearTimeout(statusTimeout);
-    status.textContent = message;
+    statusKey = key;
+    status.textContent = t(key);
     status.hidden = false;
     if (!persistent) statusTimeout = setTimeout(() => { status.hidden = true; }, 6500);
   }
@@ -88,7 +91,7 @@
   setSidebar(!mobile.matches && !isPreview);
 
   const numericFields = new Set(["LuasHektar", "LuasMeter", "PanjangM", "PanjangKM"]);
-  const numberFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 3 });
+  const formatNumber = (value) => new Intl.NumberFormat(window.BandulanI18n.language === "id" ? "id-ID" : "en", { maximumFractionDigits: 3 }).format(value);
   const hasValue = (value) => value !== null && value !== undefined && String(value).trim() !== "";
 
   // Construct popup content as text nodes so dataset attributes cannot become HTML.
@@ -98,18 +101,18 @@
     card.className = "feature-popup";
     const category = document.createElement("div");
     category.className = "feature-category";
-    category.textContent = meta.category;
+    category.textContent = t(meta.categoryKey);
     const heading = document.createElement("h2");
     const nameKey = hasValue(properties.Lokasi) ? "Lokasi" : hasValue(properties.Nama) ? "Nama" : null;
-    heading.textContent = nameKey ? properties[nameKey] : meta.category;
+    heading.textContent = nameKey ? properties[nameKey] : t(meta.categoryKey);
     card.append(category, heading);
     const list = document.createElement("dl");
     Object.entries(properties).forEach(([key, value]) => {
       if (!hasValue(value) || key === nameKey) return;
       const label = document.createElement("dt");
-      label.textContent = bandulanFields[key] || key;
+      label.textContent = bandulanFields[key] ? t(bandulanFields[key]) : key;
       const detail = document.createElement("dd");
-      detail.textContent = numericFields.has(key) && Number.isFinite(Number(value)) ? numberFormat.format(Number(value)) : String(value);
+      detail.textContent = numericFields.has(key) && Number.isFinite(Number(value)) ? formatNumber(Number(value)) : String(value);
       list.append(label, detail);
     });
     if (list.childElementCount) card.append(list);
@@ -137,7 +140,7 @@
           if (!element) return;
           element.setAttribute("tabindex", "0");
           element.setAttribute("role", "button");
-          element.setAttribute("aria-label", `View ${featureLayer.feature.properties.Lokasi}`);
+          bind(element, "map.viewWarung", { name: featureLayer.feature.properties.Lokasi }, "aria-label");
           element.onkeydown = (event) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
@@ -155,7 +158,7 @@
       const fieldset = document.createElement("fieldset");
       fieldset.className = "layer-fieldset";
       const legend = document.createElement("legend");
-      legend.textContent = meta.group;
+      bind(legend, meta.groupKey);
       fieldset.append(legend);
       groupContainer.append(fieldset);
       groups.set(meta.group, fieldset);
@@ -166,17 +169,17 @@
     checkbox.type = "checkbox";
     checkbox.id = `layer-${meta.id}`;
     checkbox.checked = map.hasLayer(meta.layer);
-    checkbox.setAttribute("aria-label", meta.label);
+    bind(checkbox, meta.labelKey, {}, "aria-label");
     const symbol = document.createElement("span");
     symbol.className = `layer-symbol ${meta.symbol || "area"}`;
     symbol.style.backgroundColor = meta.color;
     symbol.setAttribute("aria-hidden", "true");
     const name = document.createElement("span");
-    name.textContent = meta.label;
+    bind(name, meta.labelKey);
     const count = document.createElement("span");
     count.className = "layer-count";
     count.textContent = meta.layer.getLayers().length;
-    count.setAttribute("aria-label", `${count.textContent} features`);
+    bind(count, "map.featureCount", { count: count.textContent }, "aria-label");
     row.append(checkbox, symbol, name, count);
     groups.get(meta.group).append(row);
     checkboxes.set(meta.layer, checkbox);
@@ -198,7 +201,7 @@
       checkbox.checked = map.hasLayer(layer);
       if (checkbox.checked) active++;
     });
-    document.getElementById("active-count").textContent = `${active} active`;
+    bind(document.getElementById("active-count"), "map.activeCount", { count: active });
     basemapToggle.checked = map.hasLayer(layer_OpenStreetMap_0);
   }
   map.on("layeradd layerremove", syncLayers);
@@ -221,14 +224,14 @@
     results.replaceChildren();
     results.hidden = !query;
     if (!query) {
-      summary.textContent = `Search the ${warungs.length} mapped locations.`;
+      bind(summary, "search.prompt", { count: warungs.length });
       return;
     }
     const matches = warungs.filter((layer) => {
       const properties = layer.feature.properties;
       return `${properties.Lokasi || ""} ${properties.Alamat || ""}`.toLocaleLowerCase().includes(query);
     });
-    summary.textContent = matches.length ? `${matches.length} ${matches.length === 1 ? "location" : "locations"} found. Select a result to view it.` : "No locations found. Try a different name or address.";
+    bind(summary, matches.length ? (matches.length === 1 ? "search.foundOne" : "search.foundMany") : "search.empty", { count: matches.length });
     matches.forEach((layer) => {
       const item = document.createElement("li");
       const button = document.createElement("button");
@@ -250,7 +253,7 @@
     }
   });
 
-  const initialHash = location.hash;
+  const initialHash = bandulanInitialHash;
   function resetView() {
     map.fitBounds(layer_BatasKelurahan_1.getBounds(), { padding: [35, 35], animate: !reducedMotion.matches, maxZoom: 16 });
   }
@@ -260,8 +263,8 @@
       const container = L.DomUtil.create("div", "leaflet-bar map-reset-control");
       const button = L.DomUtil.create("button", "", container);
       button.type = "button";
-      button.setAttribute("aria-label", "Reset map view");
-      button.title = "Reset map view";
+      bind(button, "map.reset", {}, "aria-label");
+      bind(button, "map.reset", {}, "title");
       button.innerHTML = '<svg class="icon" aria-hidden="true"><use href="../assets/icons.svg#reset"/></svg>';
       L.DomEvent.disableClickPropagation(container);
       button.addEventListener("click", resetView);
@@ -289,11 +292,11 @@
   let accuracyCircle;
   locateButton.addEventListener("click", () => {
     if (!navigator.geolocation) {
-      announce("Location is not supported by this browser.");
+      announce("status.locationUnsupported");
       return;
     }
     locateButton.disabled = true;
-    announce("Finding your location…", true);
+    announce("status.locating", true);
     map.locate({ setView: false, enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
   });
   map.on("locationfound", (event) => {
@@ -301,13 +304,13 @@
     if (userMarker) map.removeLayer(userMarker);
     if (accuracyCircle) map.removeLayer(accuracyCircle);
     accuracyCircle = L.circle(event.latlng, { radius: event.accuracy, color: "#347eaa", weight: 1, fillOpacity: .08, interactive: false }).addTo(map);
-    userMarker = L.circleMarker(event.latlng, { radius: 7, color: "#fff", weight: 2, fillColor: "#347eaa", fillOpacity: 1 }).addTo(map).bindPopup("Your approximate location");
+    userMarker = L.circleMarker(event.latlng, { radius: 7, color: "#fff", weight: 2, fillColor: "#347eaa", fillOpacity: 1 }).addTo(map).bindPopup(() => t("popup.userLocation"));
     map.setView(event.latlng, 16, { animate: !reducedMotion.matches });
-    announce(layer_BatasKelurahan_1.getBounds().contains(event.latlng) ? "Location found. The blue circle shows estimated accuracy." : "Your location is outside the mapped area. Use Reset map view to return to Bandulan.");
+    announce(layer_BatasKelurahan_1.getBounds().contains(event.latlng) ? "status.locationFound" : "status.locationOutside");
   });
   map.on("locationerror", (event) => {
     locateButton.disabled = false;
-    announce(event.code === 1 ? "Location permission was denied. You can still explore the map." : "Your location could not be found. Please try again.");
+    announce(event.code === 1 ? "status.locationDenied" : "status.locationError");
   });
 
   const fullscreenButton = document.getElementById("fullscreen-button");
@@ -317,22 +320,32 @@
       if (document.fullscreenElement) await document.exitFullscreen();
       else await document.documentElement.requestFullscreen();
     } catch {
-      announce("Fullscreen is unavailable in this view. Open the full map to continue.");
+      announce("status.fullscreenError");
     }
   });
   document.addEventListener("fullscreenchange", () => {
-    fullscreenButton.setAttribute("aria-label", document.fullscreenElement ? "Exit fullscreen" : "Enter fullscreen");
+    bind(fullscreenButton, document.fullscreenElement ? "map.fullscreenExit" : "map.fullscreenEnter", {}, "aria-label");
     map.invalidateSize({ pan: false });
   });
 
   const measureToggle = document.querySelector(".leaflet-control-measure-toggle");
-  measureToggle.setAttribute("aria-label", "Measure distance or area");
-  measureToggle.title = "Measure distance or area";
+  bind(measureToggle, "measure.toggle", {}, "aria-label");
+  bind(measureToggle, "measure.toggle", {}, "title");
   let tileErrorReported = false;
   layer_OpenStreetMap_0.on("tileerror", () => {
     if (!tileErrorReported) {
-      announce("Some basemap tiles could not load. Your spatial layers are still available.");
+      announce("status.tileError");
       tileErrorReported = true;
     }
+  });
+  window.addEventListener("languagechange", () => {
+    syncLayers();
+    searchWarungs();
+    if (!status.hidden && statusKey) status.textContent = t(statusKey);
+    bandulanLayers.forEach((meta) => meta.layer.eachLayer((layer) => {
+      if (layer.isPopupOpen()) layer.getPopup().update();
+    }));
+    if (userMarker?.isPopupOpen()) userMarker.getPopup().update();
+    requestAnimationFrame(() => map.invalidateSize({ pan: false }));
   });
 })();

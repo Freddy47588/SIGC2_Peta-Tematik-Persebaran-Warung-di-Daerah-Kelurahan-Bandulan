@@ -16,13 +16,27 @@ window.bandulanLayers = [
 ];
 
 window.bandulanFields = {
-  id: "Record ID",
-  FID: "Feature ID",
-  Nama: "Name",
-  Lokasi: "Location",
-  Alamat: "Address",
-  LuasHektar: "Area (ha)",
-  LuasMeter: "Area (m²)",
-  PanjangM: "Length (m)",
-  PanjangKM: "Length (km)",
+  id: "popup.id",
+  FID: "popup.FID",
+  Nama: "popup.Nama",
+  Lokasi: "popup.Lokasi",
+  Alamat: "popup.Alamat",
+  LuasHektar: "popup.LuasHektar",
+  LuasMeter: "popup.LuasMeter",
+  PanjangM: "popup.PanjangM",
+  PanjangKM: "popup.PanjangKM",
 };
+
+const groupKeys = {
+  Business: "groups.business",
+  Administrative: "groups.administrative",
+  Infrastructure: "groups.infrastructure",
+  "Urban Features": "groups.urban",
+  "Public Facilities": "groups.facilities",
+  Environment: "groups.environment",
+};
+window.bandulanLayers.forEach((meta) => {
+  meta.labelKey = `layers.${meta.id}`;
+  meta.categoryKey = `category.${meta.id}`;
+  meta.groupKey = groupKeys[meta.group];
+});

@@ -2,6 +2,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 body { display: flex; flex-direction: column; }
 .app-header { flex: 0 0 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; gap: 16px; border-bottom: 1px solid var(--line); z-index: 1200; background: var(--bg); }
 .app-header .brand { font-size: 16px; }
+.app-header > .language-selector { margin-left: auto; }
 .brand small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; margin-top: 4px; letter-spacing: 0; }
 .app-actions { display: flex; gap: 8px; }
 .app-actions .button { min-height: 42px; font-size: 12px; padding: 10px 13px; }
@@ -47,7 +48,7 @@ body { display: flex; flex-direction: column; }
 .basemap-symbol { width: 12px; height: 12px; border-radius: 2px; background: #d5ddcb; border: 1px solid #a0b49a; }
 .basemap-group { padding-top: 10px; }
 .sidebar-note { color: var(--muted); font-size: 11px; line-height: 1.75; border-top: 1px solid var(--line); padding-top: 20px; margin-top: 24px; }
-.sidebar-home { color: var(--accent); font-size: 12px; display: inline-flex; align-items: center; min-height: 44px; }
+.sidebar-home { color: var(--accent); font-size: 12px; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
 #map { flex: 1; min-width: 0; width: auto; height: 100%; padding: 0; background: #e7ebe5; color-scheme: light; font-family: inherit; }
 .map-status { position: absolute; left: calc(310px + 50% - 155px); bottom: 36px; transform: translateX(-50%); z-index: 1000; background: var(--surface); border: 1px solid var(--line); padding: 12px 18px; border-radius: 9px; font-size: 12px; line-height: 1.5; max-width: min(420px, calc(100% - 32px)); box-shadow: 0 6px 20px #0002; margin: 0; }
 .sidebar-hidden .map-status { left: 50%; }
@@ -98,7 +99,10 @@ body { display: flex; flex-direction: column; }
   .app-actions .button span { display: none; }
 }
 @media (max-width: 700px) {
-  .app-header { flex-basis: 68px; padding: 0 12px; gap: 8px; }
+  .app-header { flex: 0 0 auto; min-height: 108px; padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
+  .app-actions { width: 100%; justify-content: flex-end; }
+  .app-actions .button { flex: 1; }
+  .app-actions .button span { display: inline; font-size: 11px; }
   .app-header .brand { font-size: 13px; gap: 8px; }
   .app-header .brand-mark { width: 32px; height: 36px; }
   .brand small { font-size: 9px; max-width: 145px; line-height: 1.4; }

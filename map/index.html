@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1"
-    />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="stylesheet" href="css/leaflet.css" />
-    <link rel="stylesheet" href="css/L.Control.Layers.Tree.css" />
-    <link rel="stylesheet" href="css/qgis2web.css" />
-    <link rel="stylesheet" href="css/fontawesome-all.min.css" />
-    <link rel="stylesheet" href="css/leaflet-search.css" />
-    <link rel="stylesheet" href="css/leaflet.photon.css" />
-    <link rel="stylesheet" href="css/leaflet-measure.css" />
-    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../assets/css/shared.css" />
-    <link rel="stylesheet" href="css/map.css" />
-    <meta name="theme-color" content="#0b111b" />
-    <meta name="description" content="Explore warung locations and eleven geographic layers in Bandulan, Malang." />
-    <title>
-      Interactive Map
-      &mdash;
-      Bandulan Warung GIS
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/leaflet-search.css">
+    <link rel="stylesheet" href="css/leaflet.photon.css">
+    <link rel="stylesheet" href="css/leaflet-measure.css">
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/shared.css">
+    <link rel="stylesheet" href="css/map.css">
+    <meta name="theme-color" content="#0b111b">
+    <meta name="description" content="Jelajahi lokasi warung dan sebelas lapisan geografis di Bandulan, Malang." data-i18n-content="page.mapDescription">
+    <title data-i18n="page.mapTitle">
+      Peta Interaktif — Bandulan Warung GIS
     </title>
+    <script src="../assets/js/i18n.js" defer></script>
   </head>
   <body>
-    <a class="skip-link" href="#warung-search">
-      Skip to warung search
+    <a class="skip-link" href="#warung-search" data-i18n="map.skip">
+      Lewati ke pencarian warung
     </a>
     <header class="app-header">
-      <a class="brand" href="../" aria-label="Back to Bandulan Warung GIS home">
+      <a class="brand" href="../" aria-label="Kembali ke beranda Bandulan Warung GIS" data-i18n-aria-label="nav.backHome">
         <span class="brand-mark">
           <svg class="icon" aria-hidden="true">
             <use href="../assets/icons.svg#map"/>
@@ -40,37 +36,42 @@
         </span>
         <span>
           Bandulan Warung GIS
-          <small>
-            Interactive Spatial Distribution Map
+          <small data-i18n="map.subtitle">
+            Peta Persebaran Spasial Interaktif
           </small>
         </span>
       </a>
-      <nav class="app-actions" aria-label="Map actions">
-        <button id="layers-toggle" class="button" aria-label="Layers" aria-expanded="true" aria-controls="map-sidebar">
+      <div class="language-selector" role="group" aria-label="Bahasa antarmuka" data-i18n-aria-label="language.label">
+        <button type="button" data-language="id" aria-label="Gunakan Bahasa Indonesia" data-i18n-aria-label="language.id" aria-pressed="true">ID</button>
+        <span aria-hidden="true">|</span>
+        <button type="button" data-language="en" aria-label="Gunakan Bahasa Inggris" data-i18n-aria-label="language.en" aria-pressed="false">EN</button>
+      </div>
+      <nav class="app-actions" aria-label="Kontrol peta" data-i18n-aria-label="map.actions">
+        <button id="layers-toggle" class="button" aria-label="Lapisan" aria-expanded="true" aria-controls="map-sidebar" data-i18n-aria-label="map.layers">
           <svg class="icon" aria-hidden="true">
             <use href="../assets/icons.svg#layers"/>
           </svg>
-          <span>
-            Layers
+          <span data-i18n="map.layers">
+            Lapisan
           </span>
         </button>
-        <button id="search-toggle" class="button" aria-label="Search warungs">
+        <button id="search-toggle" class="button" aria-label="Cari warung" data-i18n-aria-label="map.searchAction">
           <svg class="icon" aria-hidden="true">
             <use href="../assets/icons.svg#search"/>
           </svg>
-          <span>
-            Search
+          <span data-i18n="map.search">
+            Cari
           </span>
         </button>
-        <button id="locate-button" class="button" aria-label="Locate me">
+        <button id="locate-button" class="button" aria-label="Temukan lokasi saya" data-i18n-aria-label="map.locateAction">
           <svg class="icon" aria-hidden="true">
             <use href="../assets/icons.svg#locate"/>
           </svg>
-          <span>
-            Locate
+          <span data-i18n="map.locate">
+            Lokasi
           </span>
         </button>
-        <button id="fullscreen-button" class="button icon-button" aria-label="Enter fullscreen" hidden>
+        <button id="fullscreen-button" class="button icon-button" aria-label="Layar penuh" hidden data-i18n-aria-label="map.fullscreenEnter">
           <svg class="icon" aria-hidden="true">
             <use href="../assets/icons.svg#fullscreen"/>
           </svg>
@@ -78,72 +79,72 @@
       </nav>
     </header>
     <main class="map-workspace">
-      <aside id="map-sidebar" class="map-sidebar" aria-label="Map overview, search, and layers">
+      <aside id="map-sidebar" class="map-sidebar" aria-label="Ringkasan peta, pencarian, dan lapisan" data-i18n-aria-label="map.sidebarLabel">
         <div class="sidebar-heading">
           <div>
-            <span class="eyebrow">
-              Explore Bandulan
+            <span class="eyebrow" data-i18n="map.explore">
+              Jelajahi Bandulan
             </span>
-            <h1>
-              Neighborhood layers
+            <h1 data-i18n="map.sidebarTitle">
+              Lapisan wilayah
             </h1>
           </div>
-          <button id="sidebar-close" class="button icon-button" aria-label="Close sidebar">
+          <button id="sidebar-close" class="button icon-button" aria-label="Tutup panel samping" data-i18n-aria-label="map.closeSidebar">
             <svg class="icon" aria-hidden="true">
               <use href="../assets/icons.svg#close"/>
             </svg>
           </button>
         </div>
-        <p class="sidebar-intro">
-          Local warungs and the geography around them in Bandulan, Malang.
+        <p class="sidebar-intro" data-i18n="map.description">
+          Warung lokal dan kondisi geografis di sekitarnya di Bandulan, Malang.
         </p>
         <div class="sidebar-stats">
           <div>
             <strong id="warung-count">
               10
             </strong>
-            <span>
-              warung locations
+            <span data-i18n="map.warungCount">
+              lokasi warung
             </span>
           </div>
           <div>
             <strong id="layer-count">
               11
             </strong>
-            <span>
-              spatial layers
+            <span data-i18n="map.layerCount">
+              lapisan spasial
             </span>
           </div>
         </div>
         <section class="search-section" aria-labelledby="search-label">
-          <label id="search-label" for="warung-search">
-            Find a warung
+          <label id="search-label" for="warung-search" data-i18n="search.label">
+            Temukan warung
           </label>
           <div class="search-field">
             <svg class="icon" aria-hidden="true">
               <use href="../assets/icons.svg#search"/>
             </svg>
-            <input id="warung-search" type="search" placeholder="Search by name or address" autocomplete="off" aria-controls="search-results" aria-describedby="search-summary">
+            <input id="warung-search" type="search" placeholder="Cari nama atau alamat" autocomplete="off" aria-controls="search-results" aria-describedby="search-summary" data-i18n-placeholder="search.placeholder">
           </div>
-          <p id="search-summary" class="search-summary" role="status">
-            Search the 10 mapped locations.
+          <p id="search-summary" class="search-summary" role="status" data-i18n="search.prompt" data-i18n-params="{&quot;count&quot;:10}">
+            Telusuri 10 lokasi yang dipetakan.
           </p>
-          <ul id="search-results" class="search-results" aria-label="Warung search results" hidden>
+          <ul id="search-results" class="search-results" aria-label="Hasil pencarian warung" hidden data-i18n-aria-label="search.resultsLabel">
           </ul>
         </section>
         <div class="layers-heading">
-          <h2>
-            Map layers
+          <h2 data-i18n="map.layersTitle">
+            Lapisan Peta
           </h2>
-          <span id="active-count">
-            11 active
+          <span id="active-count" data-i18n="map.activeCount" data-i18n-params="{&quot;count&quot;:11}">
+            11 aktif
           </span>
         </div>
         <div id="layer-groups">
         </div>
         <fieldset class="basemap-group">
-          <legend>
-            Basemap
+          <legend data-i18n="map.basemap">
+            Peta dasar
           </legend>
           <label class="layer-row">
             <input id="basemap-toggle" type="checkbox" checked>
@@ -154,26 +155,28 @@
             </span>
           </label>
         </fieldset>
-        <p class="sidebar-note">
-          Select a map feature for details. Use the ruler to measure distance or area.
+        <p class="sidebar-note" data-i18n="map.note">
+          Pilih fitur peta untuk melihat detail. Gunakan penggaris untuk mengukur jarak atau luas.
         </p>
         <a class="sidebar-home" href="../">
-          &larr;
-          Project overview
+          <span aria-hidden="true">←</span>
+          <span data-i18n="overview.eyebrow">Tentang Proyek</span>
         </a>
       </aside>
-      <button id="sidebar-backdrop" class="sidebar-backdrop" aria-label="Close layer drawer" tabindex="-1" hidden>
+      <button id="sidebar-backdrop" class="sidebar-backdrop" aria-label="Tutup panel lapisan" tabindex="-1" hidden data-i18n-aria-label="map.closeDrawer">
       </button>
-      <div id="map" role="region" aria-label="Interactive Bandulan map" tabindex="0">
+      <div id="map" role="region" aria-label="Peta Bandulan interaktif" tabindex="0" data-i18n-aria-label="map.region">
       </div>
       <p id="map-status" class="map-status" role="status" hidden>
       </p>
     </main>
     <noscript>
       <p class="no-script">
-        JavaScript is required to display the interactive map.
-        <a href="../images/Layout_Peta_Bandulan.png">
-          View the static map layout
+        <span data-i18n="map.noScript">
+          JavaScript diperlukan untuk menampilkan peta interaktif.
+        </span>
+        <a href="../images/Layout_Peta_Bandulan.png" data-i18n="map.staticLayout">
+          Lihat tata letak peta statis
         </a>
         .
       </p>
@@ -227,6 +230,7 @@
         layer.openPopup();
       }
 
+      var bandulanInitialHash = window.location.hash;
       var map = L.map("map", {
         zoomControl: false,
         maxZoom: 28,
@@ -1467,6 +1471,7 @@
       });
     </script>
     <script src="js/map-config.js"></script>
-    <script src="js/map-ui.js"></script>
+    <script src="js/map-ui.js" defer></script>
+    <script src="js/map-i18n.js" defer></script>
   </body>
 </html>

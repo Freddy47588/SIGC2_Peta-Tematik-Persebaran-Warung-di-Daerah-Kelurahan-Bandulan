@@ -26,6 +26,11 @@ button, .button { touch-action: manipulation; }
 .brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 650; letter-spacing: -.025em; }
 .brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #42685d; border-radius: 12px; background: #17382f; color: var(--accent); }
 .brand-mark .icon { width: 23px; height: 23px; }
+.language-selector { display: inline-flex; flex: 0 0 auto; align-items: center; align-self: center; gap: 1px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
+.language-selector button { width: 34px; min-height: 36px; border: 0; border-radius: 5px; padding: 6px; color: var(--muted); background: transparent; font-size: 11px; font-weight: 650; }
+.language-selector button:hover { color: var(--text); background: var(--surface-raised); }
+.language-selector button[aria-pressed="true"] { color: var(--accent); background: #17382f; }
+.language-selector > span { color: var(--muted); font-size: 11px; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 12px 19px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; line-height: 1.35; }
 .button:hover { background: var(--surface-raised); border-color: #516072; }
 .button-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }

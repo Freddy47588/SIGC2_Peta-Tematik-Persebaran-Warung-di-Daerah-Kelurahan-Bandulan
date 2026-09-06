@@ -30,6 +30,7 @@ The project connects spatial data preparation in QGIS with publication through q
 - **Map utilities:** locate yourself with browser permission, use a metric scale, or enter fullscreen where supported.
 - **Responsive interface:** a collapsible desktop sidebar, mobile layer drawer, and embedded landing-page preview.
 - **Keyboard support:** labeled controls, focus indicators, searchable results, and focusable warung markers.
+- **Bilingual interface:** Indonesian by default, with an accessible `ID | EN` selector on both pages. Language changes apply immediately and are remembered across navigation and future visits using local storage.
 
 ## 🧭 Spatial Data Layers
 
@@ -74,31 +75,36 @@ The qgis2web export supplies the spatial layers and mapping foundation. Separate
 
 ```text
 bandulan-warung-gis/
-├── index.html                 # Portfolio landing page
+├── index.html                # Portfolio landing page
 ├── README.md
 ├── assets/
 │   ├── css/
-│   │   ├── shared.css         # Shared design tokens and controls
-│   │   └── landing.css        # Landing-page layout
-│   ├── js/landing.js          # Responsive navigation
+│   │   ├── shared.css        # Shared design tokens and controls
+│   │   └── landing.css       # Landing-page layout
+│   ├── js/
+│   │   ├── landing.js        # Responsive navigation
+│   │   └── i18n.js           # Shared Indonesian/English dictionary and selector
 │   ├── favicon.svg
-│   └── icons.svg              # Shared line-icon sprite
+│   └── icons.svg             # Shared line-icon sprite
 ├── images/
 │   ├── Layout_Peta_Bandulan.png
-│   └── map-preview.png        # Screenshot of the interactive map
+│   └── map-preview.png       # Screenshot of the interactive map
 └── map/
-    ├── index.html             # App shell and qgis2web initialization
-    ├── data/                  # Original spatial datasets
-    ├── css/map.css            # Custom map presentation
+    ├── index.html            # App shell and qgis2web initialization
+    ├── data/                 # Original spatial datasets
+    ├── css/map.css           # Custom map presentation
     ├── js/
-    │   ├── map-config.js      # Layer labels, colors, and field metadata
-    │   └── map-ui.js          # Sidebar, search, popups, and controls
+    │   ├── map-config.js     # Layer labels, colors, and field metadata
+    │   ├── map-ui.js         # Sidebar, search, popups, and controls
+    │   └── map-i18n.js       # Translation of bundled map controls
     ├── images/
     ├── legend/
     └── webfonts/
 ```
 
 The `map/css/` and `map/js/` directories also contain the existing qgis2web and third-party dependencies. Custom files are separate from those libraries. Re-exporting from QGIS may overwrite `map/index.html`; preserve its app shell, attribution, and custom-script integration when updating the export.
+
+The shared translation dictionary uses semantic keys and Indonesian HTML fallbacks. Only interface labels are translated; geographic names, addresses, dataset properties, and spatial files stay unchanged. The embedded map follows the selected language. If browser storage is unavailable, language switching still works for the current page and its embedded preview, but the preference cannot be remembered across visits. This README remains English.
 
 ## 🚀 Running Locally
 
