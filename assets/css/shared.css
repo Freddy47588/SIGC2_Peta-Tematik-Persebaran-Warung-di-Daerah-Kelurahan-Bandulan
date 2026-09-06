@@ -1,0 +1,41 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b111b;
+  --surface: #121c29;
+  --surface-raised: #192535;
+  --line: #293646;
+  --text: #eef3f8;
+  --muted: #a5b3c4;
+  --accent: #77ddbd;
+  --accent-ink: #0c342b;
+  --radius: 16px;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .65; }
+button, .button { touch-action: manipulation; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+[hidden] { display: none !important; }
+.icon { width: 20px; height: 20px; flex: 0 0 auto; fill: none; stroke: currentColor; }
+.brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 650; letter-spacing: -.025em; }
+.brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #42685d; border-radius: 12px; background: #17382f; color: var(--accent); }
+.brand-mark .icon { width: 23px; height: 23px; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 12px 19px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; line-height: 1.35; }
+.button:hover { background: var(--surface-raised); border-color: #516072; }
+.button-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.button-primary:hover { background: #97e8ce; border-color: #97e8ce; }
+.icon-button { padding: 10px; width: 44px; height: 44px; min-height: 44px; }
+.eyebrow { color: var(--accent); font-size: 11px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; }
+.muted { color: var(--muted); }
+.skip-link { position: fixed; top: -100px; left: 16px; z-index: 5000; padding: 14px; background: var(--accent); color: var(--accent-ink); border-radius: 8px; }
+.skip-link:focus { top: 10px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+}

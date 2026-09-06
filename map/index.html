@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
       name="viewport"
-      content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width"
+      content="width=device-width, initial-scale=1"
     />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -16,20 +16,168 @@
     <link rel="stylesheet" href="css/leaflet-search.css" />
     <link rel="stylesheet" href="css/leaflet.photon.css" />
     <link rel="stylesheet" href="css/leaflet-measure.css" />
-    <style>
-      html,
-      body,
-      #map {
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-      }
-    </style>
-    <title>Peta Tematik Persebaran Warung di Daerah Kelurahan Bandulan</title>
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/css/shared.css" />
+    <link rel="stylesheet" href="css/map.css" />
+    <meta name="theme-color" content="#0b111b" />
+    <meta name="description" content="Explore warung locations and eleven geographic layers in Bandulan, Malang." />
+    <title>
+      Interactive Map
+      &mdash;
+      Bandulan Warung GIS
+    </title>
   </head>
   <body>
-    <div id="map"></div>
+    <a class="skip-link" href="#warung-search">
+      Skip to warung search
+    </a>
+    <header class="app-header">
+      <a class="brand" href="../" aria-label="Back to Bandulan Warung GIS home">
+        <span class="brand-mark">
+          <svg class="icon" aria-hidden="true">
+            <use href="../assets/icons.svg#map"/>
+          </svg>
+        </span>
+        <span>
+          Bandulan Warung GIS
+          <small>
+            Interactive Spatial Distribution Map
+          </small>
+        </span>
+      </a>
+      <nav class="app-actions" aria-label="Map actions">
+        <button id="layers-toggle" class="button" aria-label="Layers" aria-expanded="true" aria-controls="map-sidebar">
+          <svg class="icon" aria-hidden="true">
+            <use href="../assets/icons.svg#layers"/>
+          </svg>
+          <span>
+            Layers
+          </span>
+        </button>
+        <button id="search-toggle" class="button" aria-label="Search warungs">
+          <svg class="icon" aria-hidden="true">
+            <use href="../assets/icons.svg#search"/>
+          </svg>
+          <span>
+            Search
+          </span>
+        </button>
+        <button id="locate-button" class="button" aria-label="Locate me">
+          <svg class="icon" aria-hidden="true">
+            <use href="../assets/icons.svg#locate"/>
+          </svg>
+          <span>
+            Locate
+          </span>
+        </button>
+        <button id="fullscreen-button" class="button icon-button" aria-label="Enter fullscreen" hidden>
+          <svg class="icon" aria-hidden="true">
+            <use href="../assets/icons.svg#fullscreen"/>
+          </svg>
+        </button>
+      </nav>
+    </header>
+    <main class="map-workspace">
+      <aside id="map-sidebar" class="map-sidebar" aria-label="Map overview, search, and layers">
+        <div class="sidebar-heading">
+          <div>
+            <span class="eyebrow">
+              Explore Bandulan
+            </span>
+            <h1>
+              Neighborhood layers
+            </h1>
+          </div>
+          <button id="sidebar-close" class="button icon-button" aria-label="Close sidebar">
+            <svg class="icon" aria-hidden="true">
+              <use href="../assets/icons.svg#close"/>
+            </svg>
+          </button>
+        </div>
+        <p class="sidebar-intro">
+          Local warungs and the geography around them in Bandulan, Malang.
+        </p>
+        <div class="sidebar-stats">
+          <div>
+            <strong id="warung-count">
+              10
+            </strong>
+            <span>
+              warung locations
+            </span>
+          </div>
+          <div>
+            <strong id="layer-count">
+              11
+            </strong>
+            <span>
+              spatial layers
+            </span>
+          </div>
+        </div>
+        <section class="search-section" aria-labelledby="search-label">
+          <label id="search-label" for="warung-search">
+            Find a warung
+          </label>
+          <div class="search-field">
+            <svg class="icon" aria-hidden="true">
+              <use href="../assets/icons.svg#search"/>
+            </svg>
+            <input id="warung-search" type="search" placeholder="Search by name or address" autocomplete="off" aria-controls="search-results" aria-describedby="search-summary">
+          </div>
+          <p id="search-summary" class="search-summary" role="status">
+            Search the 10 mapped locations.
+          </p>
+          <ul id="search-results" class="search-results" aria-label="Warung search results" hidden>
+          </ul>
+        </section>
+        <div class="layers-heading">
+          <h2>
+            Map layers
+          </h2>
+          <span id="active-count">
+            11 active
+          </span>
+        </div>
+        <div id="layer-groups">
+        </div>
+        <fieldset class="basemap-group">
+          <legend>
+            Basemap
+          </legend>
+          <label class="layer-row">
+            <input id="basemap-toggle" type="checkbox" checked>
+            <span class="basemap-symbol" aria-hidden="true">
+            </span>
+            <span>
+              OpenStreetMap
+            </span>
+          </label>
+        </fieldset>
+        <p class="sidebar-note">
+          Select a map feature for details. Use the ruler to measure distance or area.
+        </p>
+        <a class="sidebar-home" href="../">
+          &larr;
+          Project overview
+        </a>
+      </aside>
+      <button id="sidebar-backdrop" class="sidebar-backdrop" aria-label="Close layer drawer" tabindex="-1" hidden>
+      </button>
+      <div id="map" role="region" aria-label="Interactive Bandulan map" tabindex="0">
+      </div>
+      <p id="map-status" class="map-status" role="status" hidden>
+      </p>
+    </main>
+    <noscript>
+      <p class="no-script">
+        JavaScript is required to display the interactive map.
+        <a href="../images/Layout_Peta_Bandulan.png">
+          View the static map layout
+        </a>
+        .
+      </p>
+    </noscript>
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -159,38 +307,6 @@
           popup._contentNode.classList.remove("media");
         }
       }
-      var title = new L.Control({ position: "topleft" });
-      title.onAdd = function (map) {
-        this._div = L.DomUtil.create("div", "info");
-        this.update();
-        return this._div;
-      };
-      title.update = function () {
-        this._div.innerHTML =
-          "<h2>Peta Tematik Persebaran Warung di Daerah Kelurahan Bandulan</h2>";
-      };
-      title.addTo(map);
-      var abstract = new L.Control({ position: "topright" });
-      abstract.onAdd = function (map) {
-        this._div = L.DomUtil.create("div", "leaflet-control abstract");
-        this._div.id = "abstract";
-        this._div.setAttribute("onmouseenter", "abstract.show()");
-        this._div.setAttribute("onmouseleave", "abstract.hide()");
-        this.hide();
-        return this._div;
-      };
-      abstract.hide = function () {
-        this._div.classList.remove("abstractUncollapsed");
-        this._div.classList.add("abstract");
-        this._div.innerHTML = "i";
-      };
-      abstract.show = function () {
-        this._div.classList.remove("abstract");
-        this._div.classList.add("abstractUncollapsed");
-        this._div.innerHTML =
-          "Kelurahan Bandulan berada di Kecamatan Sukun, Kota Malang. Daerah ini sebagian besar terdiri dari kawasan permukiman, jalan-jalan perumahan, dan berbagai fasilitas umum seperti sekolah, pabrik, serta ruang terbuka hijau. Warung-warung di wilayah ini umumnya tersebar di sepanjang jalan utama dan di area permukiman yang padat.";
-      };
-      abstract.addTo(map);
       var zoomControl = L.control
         .zoom({
           position: "topleft",
@@ -219,7 +335,7 @@
         {
           pane: "pane_OpenStreetMap_0",
           opacity: 1.0,
-          attribution: "",
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
           minZoom: 1,
           maxZoom: 28,
           minNativeZoom: 0,
@@ -1317,143 +1433,6 @@
       });
       bounds_group.addLayer(layer_LokasiWarung_11);
       map.addLayer(layer_LokasiWarung_11);
-      map.on("zoomend", function (e) {
-        if (map.getZoom() <= 19 && map.getZoom() >= 9) {
-          map.addLayer(layer_BatasKelurahan_1);
-        } else if (map.getZoom() > 19 || map.getZoom() < 9) {
-          map.removeLayer(layer_BatasKelurahan_1);
-        }
-      });
-      if (map.getZoom() <= 19 && map.getZoom() >= 9) {
-        map.addLayer(layer_BatasKelurahan_1);
-      } else if (map.getZoom() > 19 || map.getZoom() < 9) {
-        map.removeLayer(layer_BatasKelurahan_1);
-      }
-      var overlaysTree = [
-        {
-          label: '<img src="legend/LokasiWarung_11.png" /> Lokasi Warung',
-          layer: layer_LokasiWarung_11,
-        },
-        {
-          label: '<img src="legend/JalanDesa_10.png" /> Jalan Desa',
-          layer: layer_JalanDesa_10,
-        },
-        {
-          label: '<img src="legend/JalanPerumahan_9.png" /> Jalan Perumahan',
-          layer: layer_JalanPerumahan_9,
-        },
-        {
-          label: '<img src="legend/JalanGang_8.png" /> Jalan Gang',
-          layer: layer_JalanGang_8,
-        },
-        {
-          label: '<img src="legend/Sungai_7.png" /> Sungai',
-          layer: layer_Sungai_7,
-        },
-        {
-          label: '<img src="legend/Pabrik_6.png" /> Pabrik',
-          layer: layer_Pabrik_6,
-        },
-        {
-          label:
-            '<img src="legend/LahanTerbukaHijau_5.png" /> Lahan Terbuka Hijau',
-          layer: layer_LahanTerbukaHijau_5,
-        },
-        {
-          label: '<img src="legend/Bangunan_4.png" /> Bangunan',
-          layer: layer_Bangunan_4,
-        },
-        {
-          label: '<img src="legend/Sekolah_3.png" /> Sekolah',
-          layer: layer_Sekolah_3,
-        },
-        {
-          label: '<img src="legend/Pemukiman_2.png" /> Pemukiman',
-          layer: layer_Pemukiman_2,
-        },
-        {
-          label: '<img src="legend/BatasKelurahan_1.png" /> Batas Kelurahan',
-          layer: layer_BatasKelurahan_1,
-        },
-        { label: "OpenStreetMap", layer: layer_OpenStreetMap_0 },
-      ];
-      var lay = L.control.layers.tree(null, overlaysTree, {
-        //namedToggle: true,
-        //selectorBack: false,
-        //closedSymbol: '&#8862; &#x1f5c0;',
-        //openedSymbol: '&#8863; &#x1f5c1;',
-        //collapseAll: 'Collapse all',
-        //expandAll: 'Expand all',
-        collapsed: false,
-      });
-      lay.addTo(map);
-      document.addEventListener("DOMContentLoaded", function () {
-        // set new Layers List height which considers toggle icon
-        function newLayersListHeight() {
-          var layerScrollbarElement = document.querySelector(
-            ".leaflet-control-layers-scrollbar"
-          );
-          if (layerScrollbarElement) {
-            var layersListElement = document.querySelector(
-              ".leaflet-control-layers-list"
-            );
-            var originalHeight =
-              layersListElement.style.height ||
-              window.getComputedStyle(layersListElement).height;
-            var newHeight = parseFloat(originalHeight) - 50;
-            layersListElement.style.height = newHeight + "px";
-          }
-        }
-        var isLayersListExpanded = true;
-        var controlLayersElement = document.querySelector(
-          ".leaflet-control-layers"
-        );
-        var toggleLayerControl = document.querySelector(
-          ".leaflet-control-layers-toggle"
-        );
-        // toggle Collapsed/Expanded and apply new Layers List height
-        toggleLayerControl.addEventListener("click", function () {
-          if (isLayersListExpanded) {
-            controlLayersElement.classList.remove(
-              "leaflet-control-layers-expanded"
-            );
-          } else {
-            controlLayersElement.classList.add(
-              "leaflet-control-layers-expanded"
-            );
-          }
-          isLayersListExpanded = !isLayersListExpanded;
-          newLayersListHeight();
-        });
-        // apply new Layers List height if toggle layerstree
-        if (controlLayersElement) {
-          controlLayersElement.addEventListener("click", function (event) {
-            var toggleLayerHeaderPointer = event.target.closest(
-              ".leaflet-layerstree-header-pointer span"
-            );
-            if (toggleLayerHeaderPointer) {
-              newLayersListHeight();
-            }
-          });
-        }
-        // Collapsed/Expanded at Start to apply new height
-        setTimeout(function () {
-          toggleLayerControl.click();
-        }, 10);
-        setTimeout(function () {
-          toggleLayerControl.click();
-        }, 10);
-        // Collapsed touch/small screen
-        var isSmallScreen = window.innerWidth < 650;
-        if (isSmallScreen) {
-          setTimeout(function () {
-            controlLayersElement.classList.remove(
-              "leaflet-control-layers-expanded"
-            );
-            isLayersListExpanded = !isLayersListExpanded;
-          }, 500);
-        }
-      });
       setBounds();
       var i = 0;
       layer_JalanDesa_10.eachLayer(function (layer) {
@@ -1476,21 +1455,6 @@
         addLabel(layer, i);
         i++;
       });
-      map.addControl(
-        new L.Control.Search({
-          layer: layer_LokasiWarung_11,
-          initial: false,
-          hideMarkerOnCollapse: true,
-          propertyName: "Lokasi",
-        })
-      );
-      if (typeof url === "undefined") {
-        document.getElementsByClassName("search-button")[0].className +=
-          " fa fa-binoculars";
-      } else {
-        document.getElementsByClassName("search-button")[1].className +=
-          " fa fa-binoculars";
-      }
       resetLabels([layer_JalanDesa_10]);
       map.on("zoomend", function () {
         resetLabels([layer_JalanDesa_10]);
@@ -1502,5 +1466,7 @@
         resetLabels([layer_JalanDesa_10]);
       });
     </script>
+    <script src="js/map-config.js"></script>
+    <script src="js/map-ui.js"></script>
   </body>
 </html>

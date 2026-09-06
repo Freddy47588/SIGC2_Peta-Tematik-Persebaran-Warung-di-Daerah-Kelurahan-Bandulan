@@ -1,498 +1,583 @@
 <!doctype html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#020617" />
-  <title>Peta Persebaran Warung | Kelurahan Bandulan, Malang</title>
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    /* Smooth scroll (tetap aman untuk mobile) */
-    html { scroll-behavior: smooth; }
-
-    /* Biar tap highlight iOS/Android lebih halus */
-    * { -webkit-tap-highlight-color: transparent; }
-
-    /* Respect prefer-reduced-motion */
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      .reduce-motion\\:transition-none { transition: none !important; }
-      .reduce-motion\\:animate-none { animation: none !important; }
-    }
-  </style>
-</head>
-
-<body class="bg-slate-950 text-slate-100">
-  <!-- ====== CONFIG ====== -->
-  <script>
-    const WEB_PETA_URL = "./map/";
-  </script>
-
-  <!-- ====== NAVBAR ====== -->
-  <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur reduce-motion:transition-none">
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-      <a href="#" class="flex items-center gap-2">
-        <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">
-          🗺️
-        </span>
-        <div class="leading-tight">
-          <p class="text-sm font-semibold">Peta Persebaran Warung</p>
-          <p class="text-xs text-slate-300">Kelurahan Bandulan • Kota Malang</p>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b111b">
+    <meta name="description" content="Explore local warung locations, roads, and geographic features in Bandulan, Malang through an interactive WebGIS built with QGIS and Leaflet.">
+    <title>
+      Bandulan Warung GIS — Local Business Mapping
+    </title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/css/shared.css">
+    <link rel="stylesheet" href="assets/css/landing.css">
+    <script src="assets/js/landing.js" defer>
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a class="brand" href="./" aria-label="Bandulan Warung GIS home">
+          <span class="brand-mark">
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#map"/>
+            </svg>
+          </span>
+          Bandulan Warung GIS
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#overview">
+            Overview
+          </a>
+          <a href="#features">
+            Features
+          </a>
+          <a href="#layers">
+            Data layers
+          </a>
+          <a href="#workflow">
+            Workflow
+          </a>
+        </nav>
+        <div class="nav-actions">
+          <a class="button button-primary" href="map/">
+            Open map
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#arrow"/>
+            </svg>
+          </a>
+          <button id="menu-toggle" class="button icon-button menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobile-nav">
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#menu"/>
+            </svg>
+          </button>
         </div>
-      </a>
-
-      <!-- Desktop nav -->
-      <nav class="hidden items-center gap-6 md:flex">
-        <a href="#tentang" class="text-sm text-slate-300 hover:text-white">Tentang</a>
-        <a href="#abstrak" class="text-sm text-slate-300 hover:text-white">Abstrak</a>
-        <a href="#tujuan" class="text-sm text-slate-300 hover:text-white">Tujuan & Manfaat</a>
-        <a href="#layout" class="text-sm text-slate-300 hover:text-white">Layout</a>
-        <a href="#preview" class="text-sm text-slate-300 hover:text-white">Preview</a>
+      </div>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation" hidden>
+        <a href="#overview">
+          Overview
+        </a>
+        <a href="#features">
+          Features
+        </a>
+        <a href="#layers">
+          Data layers
+        </a>
+        <a href="#workflow">
+          Workflow
+        </a>
       </nav>
-
-      <!-- Actions -->
-      <div class="flex items-center gap-2">
-        <!-- Secondary CTA (desktop only) -->
-        <button
-          onclick="scrollToPreview()"
-          class="hidden rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10 md:inline-flex"
-        >
-          Lihat Preview
-        </button>
-
-        <!-- Primary CTA -->
-        <a
-          id="btnKePetaTop"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          class="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
-        >
-          Buka Web Peta
-          <span aria-hidden="true">↗</span>
-        </a>
-
-        <!-- Mobile menu button (lebih besar biar enak disentuh) -->
-        <button
-          id="btnMenu"
-          class="inline-flex items-center justify-center rounded-xl bg-white/5 px-3 py-2 text-sm font-semibold ring-1 ring-white/10 hover:bg-white/10 md:hidden"
-          aria-label="Buka menu"
-          aria-expanded="false"
-          aria-controls="mobileNav"
-        >
-          ☰
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile nav panel -->
-    <div id="mobileNav" class="hidden border-t border-white/10 bg-slate-950/90 md:hidden">
-      <div class="mx-auto max-w-6xl px-4 py-3">
-        <div class="flex flex-col gap-2">
-          <a href="#tentang" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Tentang</a>
-          <a href="#abstrak" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Abstrak</a>
-          <a href="#tujuan" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Tujuan & Manfaat</a>
-          <a href="#layout" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Layout</a>
-          <a href="#preview" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white">Preview</a>
-
-          <!-- Quick actions on mobile -->
-          <div class="mt-2 grid grid-cols-2 gap-2">
-            <button
-              onclick="scrollToPreview(); closeMobileNav();"
-              class="rounded-xl bg-white/5 px-3 py-2 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-            >
-              Lihat Preview
-            </button>
-            <a
-              id="btnKePetaMobile"
-              href="#"
-              target="_blank"
-              rel="noopener"
-              class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400"
-            >
-              Buka Peta ↗
-            </a>
+    </header>
+    <main id="main">
+      <section class="hero">
+        <div class="container">
+          <div class="hero-grid">
+            <div>
+              <div class="location">
+                <svg class="icon" aria-hidden="true">
+                  <use href="assets/icons.svg#pin"/>
+                </svg>
+                BANDULAN, MALANG · INDONESIA
+              </div>
+              <h1>
+                Bandulan
+                <br>
+                <span>
+                  Warung GIS
+                </span>
+              </h1>
+              <p class="hero-subtitle">
+                Interactive WebGIS for
+                <br>
+                Local Business Mapping
+              </p>
+              <p class="hero-description">
+                A closer look at the places that keep a neighborhood moving. Explore local warungs and the roads, buildings, and green spaces around them.
+              </p>
+              <div class="actions">
+                <a class="button button-primary" href="map/">
+                  Explore Interactive Map
+                  <svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#arrow"/>
+                  </svg>
+                </a>
+                <a class="button" href="https://github.com/Freddy47588/bandulan-warung-gis">
+                  <svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#code"/>
+                  </svg>
+                  View on GitHub
+                </a>
+              </div>
+              <div class="hero-meta">
+                <span>
+                  Built with QGIS
+                  &amp;
+                  Leaflet
+                </span>
+                <span>
+                  OpenStreetMap basemap
+                </span>
+              </div>
+            </div>
+            <div class="map-card">
+              <div class="map-card-bar">
+                <strong>
+                  <svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#layers"/>
+                  </svg>
+                  Warung distribution
+                </strong>
+                <span>
+                  Bandulan / 01
+                </span>
+              </div>
+              <a href="map/" aria-label="Explore the Bandulan distribution map">
+                <img class="hero-map" src="images/map-preview.png" width="1000" height="760" alt="Map of Bandulan with highlighted warung locations, roads, and an administrative boundary">
+              </a>
+              <div class="map-card-foot">
+                <span>
+                  10 locations · 11 spatial layers
+                </span>
+                <a href="map/">
+                  Explore map
+                  <svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#arrow"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="stats" aria-label="Bundled dataset highlights">
+            <div class="stat">
+              <strong>
+                10
+              </strong>
+              <span>
+                Mapped warung locations
+              </span>
+            </div>
+            <div class="stat">
+              <strong>
+                11
+              </strong>
+              <span>
+                Spatial data layers
+              </span>
+            </div>
+            <div class="stat">
+              <strong>
+                114
+              </strong>
+              <span>
+                Road features
+              </span>
+            </div>
+            <div class="stat">
+              <strong>
+                1
+              </strong>
+              <span>
+                Neighborhood to explore
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- ====== HERO ====== -->
-  <section class="relative">
-    <div class="absolute inset-0 -z-10 pointer-events-none">
-      <div class="absolute -top-32 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-indigo-500/20 blur-3xl"></div>
-      <div class="absolute -bottom-40 left-10 h-[380px] w-[380px] rounded-full bg-cyan-500/10 blur-3xl"></div>
-      <div class="absolute -bottom-52 right-10 h-[420px] w-[420px] rounded-full bg-fuchsia-500/10 blur-3xl"></div>
-    </div>
-
-    <div class="mx-auto max-w-6xl px-4 py-12 md:py-20">
-      <div class="grid items-center gap-10 md:grid-cols-2">
-        <div>
-          <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-200">
-            <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-            Data spasial • Warung • Bandulan
-          </p>
-
-          <h1 class="mt-4 text-3xl font-extrabold tracking-tight md:text-5xl">
-            Peta Persebaran Warung<br />
-            Kelurahan Bandulan, Malang
-          </h1>
-
-          <p class="mt-4 text-slate-300">
-            Visualisasi lokasi warung, jaringan jalan, serta konteks lingkungan untuk membantu pemetaan layanan masyarakat
-            dan memahami pola aktivitas ekonomi skala mikro di Bandulan.
-          </p>
-
-          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-            <!-- Primary CTA -->
-            <a
-              id="btnKePetaHero"
-              href="#"
-              target="_blank"
-              rel="noopener"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
-            >
-              Buka Web Peta Interaktif
-              <span aria-hidden="true">↗</span>
-            </a>
-
-            <!-- Secondary CTA -->
-            <button
-              onclick="scrollToPreview()"
-              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/5 px-6 py-3 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-            >
-              Lihat Preview
-              <span aria-hidden="true">↓</span>
-            </button>
+      </section>
+      <section class="section container" id="preview" aria-labelledby="preview-title">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">
+              Explore the neighborhood
+            </span>
+            <h2 id="preview-title">
+              Every location has a context.
+            </h2>
+            <p>
+              Pan, zoom, and select a warung. Switch on the layers that matter to you.
+            </p>
           </div>
-
-          <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p class="text-xs text-slate-300">Cakupan</p>
-              <p class="mt-1 text-sm font-semibold">Kel. Bandulan</p>
-            </div>
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p class="text-xs text-slate-300">Sumber</p>
-              <p class="mt-1 text-sm font-semibold">OSM • Maps</p>
-            </div>
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p class="text-xs text-slate-300">Output</p>
-              <p class="mt-1 text-sm font-semibold">Layout + Web</p>
-            </div>
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <p class="text-xs text-slate-300">Fokus</p>
-              <p class="mt-1 text-sm font-semibold">Persebaran</p>
-            </div>
-          </div>
-
-          <!-- Mobile-only hint -->
-          <p class="mt-4 text-xs text-slate-400 md:hidden">
-            Tip: Untuk layar HP, gunakan tombol <span class="text-slate-200 font-semibold">Buka Web Peta</span> agar peta lebih nyaman.
+          <a class="text-link" href="map/">
+            Open full map
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#arrow"/>
+            </svg>
+          </a>
+        </div>
+        <div class="preview-frame">
+          <iframe src="map/?preview=1" title="Interactive Bandulan warung map" loading="lazy" allow="fullscreen">
+          </iframe>
+          <p class="preview-note">
+            Use Search to find a warung by name, or Layers to explore the surrounding geography.
           </p>
         </div>
-
-        <!-- Hero card -->
-        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-black/30">
-          <div class="flex items-center justify-between">
-            <p class="text-sm font-semibold">Ringkasan Konten</p>
-            <span class="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200 ring-1 ring-white/10">Bandulan • Malang</span>
+      </section>
+      <section class="section container" id="overview" aria-labelledby="overview-title">
+        <div class="overview">
+          <div>
+            <span class="eyebrow">
+              Project overview
+            </span>
+            <h2 id="overview-title">
+              Local businesses.
+              <br>
+              A spatial perspective.
+            </h2>
           </div>
-
-          <div class="mt-4 space-y-3 text-sm text-slate-300">
-            <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
-              <p class="font-semibold text-slate-200">Apa yang ditampilkan?</p>
-              <p class="mt-1">Titik lokasi warung, klasifikasi jalan, sungai, serta bangunan & pemukiman.</p>
-            </div>
-
-            <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
-              <p class="font-semibold text-slate-200">Untuk siapa?</p>
-              <p class="mt-1">Warga, perangkat kelurahan, mahasiswa, dan peneliti yang membutuhkan WebGIS.</p>
-            </div>
-
-            <div class="rounded-2xl border border-white/10 bg-slate-950/30 p-4">
-              <p class="font-semibold text-slate-200">Manfaat</p>
-              <p class="mt-1">Pemetaan layanan, identifikasi area padat layanan, dan perencanaan akses.</p>
-            </div>
-          </div>
-
-          <!-- Mobile CTA inside card (lebih gampang dijangkau di layar kecil) -->
-          <div class="mt-5 md:hidden">
-            <a
-              id="btnKePetaCardMobile"
-              href="#"
-              target="_blank"
-              rel="noopener"
-              class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
-            >
-              Buka Web Peta
-              <span aria-hidden="true">↗</span>
-            </a>
-            <button
-              onclick="scrollToPreview()"
-              class="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-            >
-              Lihat Preview
-              <span aria-hidden="true">↓</span>
-            </button>
+          <div>
+            <p>
+              <strong>
+                Warungs are part of everyday life in Bandulan.
+              </strong>
+              This WebGIS brings their locations together with the neighborhood's roads, land use, and public facilities.
+            </p>
+            <p>
+              Centered on Kelurahan Bandulan in Kecamatan Sukun, Malang, the project turns a QGIS mapping workflow into an interactive browser experience. Explore how each business sits within the surrounding urban landscape.
+            </p>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====== TENTANG ====== -->
-  <section id="tentang" class="mx-auto max-w-6xl px-4 py-12 md:py-14">
-    <div class="grid gap-6 md:gap-8 md:grid-cols-2">
-      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-xl font-bold">Tentang Peta</h2>
-        <p class="mt-3 text-slate-300">
-          Kelurahan Bandulan berada di Kecamatan Sukun, Kota Malang. Wilayahnya didominasi kawasan permukiman
-          dan aktivitas harian warga, sehingga warung umumnya tersebar di sepanjang jalan utama dan area permukiman padat.
+      </section>
+      <section class="section container" id="features" aria-labelledby="features-title">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">
+              Made for exploration
+            </span>
+            <h2 id="features-title">
+              From a point to the bigger picture.
+            </h2>
+          </div>
+        </div>
+        <div class="cards">
+          <article class="feature-card">
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#pin"/>
+            </svg>
+            <h3>
+              Find a local warung
+            </h3>
+            <p>
+              Search ten mapped locations by name. Select a result or a map marker to see its name and address.
+            </p>
+          </article>
+          <article class="feature-card">
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#layers"/>
+            </svg>
+            <h3>
+              Choose your context
+            </h3>
+            <p>
+              Explore eleven layers grouped by purpose, from village roads and residential areas to schools and rivers.
+            </p>
+          </article>
+          <article class="feature-card">
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#ruler"/>
+            </svg>
+            <h3>
+              Explore and measure
+            </h3>
+            <p>
+              Measure distances and areas, reset the map view, or locate yourself to orient your exploration.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="section container" id="layers" aria-labelledby="layers-title">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">
+              Spatial data
+            </span>
+            <h2 id="layers-title">
+              One neighborhood. Eleven layers.
+            </h2>
+            <p>
+              Feature counts from the bundled project datasets.
+            </p>
+          </div>
+          <a class="text-link" href="https://github.com/Freddy47588/bandulan-warung-gis/tree/main/map/data">
+            Browse the data
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#arrow"/>
+            </svg>
+          </a>
+        </div>
+        <div class="layers-grid">
+          <div class="layer-group">
+            <h3>
+              Business
+            </h3>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#087f68">
+              </span>
+              Warung Locations
+              <small>
+                10
+              </small>
+            </div>
+          </div>
+          <div class="layer-group">
+            <h3>
+              Administrative
+            </h3>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#268d79">
+              </span>
+              Bandulan Boundary
+              <small>
+                1
+              </small>
+            </div>
+          </div>
+          <div class="layer-group">
+            <h3>
+              Infrastructure
+            </h3>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#a46b43">
+              </span>
+              Village Roads
+              <small>
+                39
+              </small>
+            </div>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#ba975d">
+              </span>
+              Residential Roads
+              <small>
+                23
+              </small>
+            </div>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#9298a1">
+              </span>
+              Alleys
+              <small>
+                52
+              </small>
+            </div>
+          </div>
+          <div class="layer-group">
+            <h3>
+              Urban features
+            </h3>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#9fa9b3">
+              </span>
+              Buildings
+              <small>
+                250
+              </small>
+            </div>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#d5cbb6">
+              </span>
+              Residential Areas
+              <small>
+                15
+              </small>
+            </div>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#81ae88">
+              </span>
+              Green Spaces
+              <small>
+                4
+              </small>
+            </div>
+          </div>
+          <div class="layer-group">
+            <h3>
+              Public facilities
+            </h3>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#6694bd">
+              </span>
+              Schools
+              <small>
+                6
+              </small>
+            </div>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#7e8795">
+              </span>
+              Factories
+              <small>
+                5
+              </small>
+            </div>
+          </div>
+          <div class="layer-group">
+            <h3>
+              Environment
+            </h3>
+            <div class="layer-item">
+              <span class="swatch" style="--swatch:#599eb8">
+              </span>
+              Rivers
+              <small>
+                2
+              </small>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section container" aria-labelledby="stack-title">
+        <span class="eyebrow">
+          Technology stack
+        </span>
+        <h2 id="stack-title">
+          Built on familiar geospatial tools.
+        </h2>
+        <p class="body-copy">
+          QGIS for preparation. Leaflet for interaction. A lightweight, static frontend for the web.
         </p>
-
-      </div>
-
-      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-xl font-bold">Komponen Data yang Ditampilkan</h2>
-        <ul class="mt-4 space-y-3 text-slate-300">
-          <li class="flex gap-3">
-            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">📍</span>
-            <div>
-              <p class="font-semibold text-slate-200">Lokasi Warung</p>
-              <p class="text-sm">Titik koordinat warung di Bandulan.</p>
-            </div>
+        <div class="tech-strip">
+          <span>
+            QGIS
+          </span>
+          <span>
+            qgis2web
+          </span>
+          <span>
+            Leaflet.js
+          </span>
+          <span>
+            OpenStreetMap
+          </span>
+          <span>
+            JavaScript
+          </span>
+          <span>
+            HTML
+            &amp;
+            CSS
+          </span>
+          <span>
+            GitHub Pages
+          </span>
+        </div>
+      </section>
+      <section class="section container" id="workflow" aria-labelledby="workflow-title">
+        <span class="eyebrow">
+          Project workflow
+        </span>
+        <h2 id="workflow-title">
+          From spatial data to the browser.
+        </h2>
+        <ol class="workflow">
+          <li>
+            <h3>
+              Prepare
+            </h3>
+            <p>
+              Organize geographic features and create the thematic layout in QGIS.
+            </p>
           </li>
-          <li class="flex gap-3">
-            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">🛣️</span>
-            <div>
-              <p class="font-semibold text-slate-200">Klasifikasi Jalan</p>
-              <p class="text-sm">Jalan desa, jalan perumahan, dan jalan gang.</p>
-            </div>
+          <li>
+            <h3>
+              Export
+            </h3>
+            <p>
+              Publish the spatial layers as a Leaflet web map with qgis2web.
+            </p>
           </li>
-          <li class="flex gap-3">
-            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">🏠</span>
-            <div>
-              <p class="font-semibold text-slate-200">Bangunan & Pemukiman</p>
-              <p class="text-sm">Konteks lingkungan sekitar warung.</p>
-            </div>
+          <li>
+            <h3>
+              Refine
+            </h3>
+            <p>
+              Add a responsive interface, grouped layers, and readable feature cards.
+            </p>
           </li>
-          <li class="flex gap-3">
-            <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10">🌊</span>
-            <div>
-              <p class="font-semibold text-slate-200">Sungai & Elemen Pendukung</p>
-              <p class="text-sm">Fitur hidrologi dan elemen pendukung lainnya.</p>
-            </div>
+          <li>
+            <h3>
+              Publish
+            </h3>
+            <p>
+              Serve the static project on GitHub Pages for browser-based exploration.
+            </p>
           </li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====== ABSTRAK ====== -->
-  <section id="abstrak" class="mx-auto max-w-6xl px-4 pb-12 md:pb-14">
-    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
-      <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-        <h2 class="text-xl font-bold">Abstrak</h2>
-        <p class="text-xs text-slate-400">Ringkasan penelitian/pemetaan</p>
-      </div>
-
-      <p class="mt-4 text-slate-300">
-        Pemetaan persebaran warung di Kelurahan Bandulan bertujuan untuk memvisualisasikan lokasi warung
-        dalam konteks jaringan jalan dan penggunaan lahan. Hasil pemetaan disajikan dalam bentuk layout peta
-        serta web peta interaktif, sehingga pengguna dapat mengeksplorasi sebaran warung, memahami pola
-        kedekatan dengan ruas jalan utama maupun gang, dan mengidentifikasi area permukiman yang padat layanan.
-        Informasi ini dapat dimanfaatkan untuk dukungan perencanaan wilayah, aksesibilitas layanan, serta
-        kebutuhan kajian akademik berbasis GIS.
-      </p>
-    </div>
-  </section>
-
-  <!-- ====== TUJUAN & MANFAAT ====== -->
-  <section id="tujuan" class="mx-auto max-w-6xl px-4 pb-12 md:pb-14">
-    <div class="grid gap-6 md:grid-cols-2">
-      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-xl font-bold">Tujuan</h2>
-        <ol class="mt-4 list-decimal space-y-2 pl-5 text-slate-300">
-          <li>Memetakan dan menampilkan titik persebaran warung di Kelurahan Bandulan.</li>
-          <li>Menunjukkan hubungan lokasi warung dengan jaringan jalan (desa/perumahan/gang).</li>
-          <li>Menyediakan media eksplorasi berbasis web untuk akses informasi spasial secara cepat.</li>
-          <li>Mendukung analisis sederhana terkait layanan ekonomi mikro di wilayah permukiman.</li>
         </ol>
-      </div>
-
-      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-xl font-bold">Manfaat</h2>
-        <ul class="mt-4 space-y-2 text-slate-300">
-          <li>✅ Memudahkan warga menemukan warung terdekat di sekitar area tempat tinggal.</li>
-          <li>✅ Menjadi referensi perangkat kelurahan untuk pemetaan layanan dan potensi UMKM.</li>
-          <li>✅ Mendukung tugas akademik (GIS/QGIS/WebGIS) dengan output layout & web map.</li>
-          <li>✅ Membantu analisis aksesibilitas dan pemerataan layanan berdasarkan kepadatan permukiman.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====== LAYOUT ====== -->
-  <section id="layout" class="mx-auto max-w-6xl px-4 pb-12 md:pb-14">
-    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
-      <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-        <h2 class="text-xl font-bold">Tampilan Layout Peta</h2>
-        <a
-          id="btnKePetaLayout"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          class="text-sm font-semibold text-indigo-400 hover:text-indigo-300"
-        >
-          Lihat versi interaktif →
-        </a>
-      </div>
-
-      <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/20">
-        <img
-          src="images/Layout_Peta_Bandulan.png"
-          alt="Layout Peta Persebaran Warung Kelurahan Bandulan"
-          class="h-auto w-full"
-          loading="lazy"
-        />
-      </div>
-
-      <p class="mt-5 text-sm text-slate-300">
-        Layout peta menampilkan batas kelurahan, titik lokasi warung, jaringan jalan, serta elemen pendukung.
-      </p>
-    </div>
-  </section>
-
-  <!-- ====== PREVIEW (AUTO LOAD) ====== -->
-  <section id="preview" class="mx-auto max-w-6xl px-4 pb-16">
-    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8">
-      <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h2 class="text-xl font-bold">Preview Web Peta</h2>
+      </section>
+      <section class="section container" aria-labelledby="layout-title">
+        <div class="gallery">
+          <div>
+            <span class="eyebrow">
+              Behind the map
+            </span>
+            <h2 id="layout-title">
+              The original
+              <br>
+              cartographic view.
+            </h2>
+            <p class="body-copy">
+              The QGIS layout brings the study area, legend, and warung distribution together in a single map composition.
+            </p>
+            <a class="text-link" href="images/Layout_Peta_Bandulan.png">
+              View full layout
+              <svg class="icon" aria-hidden="true">
+                <use href="assets/icons.svg#arrow"/>
+              </svg>
+            </a>
+          </div>
+          <figure>
+            <a href="images/Layout_Peta_Bandulan.png">
+              <img src="images/Layout_Peta_Bandulan.png" alt="Original QGIS thematic map layout of warung distribution in Kelurahan Bandulan" loading="lazy">
+            </a>
+            <figcaption>
+              Original project layout · QGIS
+            </figcaption>
+          </figure>
         </div>
-
-        <a
-          id="btnKePetaPreview"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          class="inline-flex items-center justify-center gap-2 rounded-2xl bg-indigo-500 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-400"
-        >
-          Buka Web Peta
-          <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-
-      <!-- Optimasi mobile:
-           - aspect untuk desktop tetap 16:9
-           - di mobile kasih tinggi minimum biar enak (tanpa bikin scroll terlalu panjang) -->
-      <div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
-        <div class="w-full">
-          <iframe
-            id="iframePeta"
-            title="Preview Web Peta Bandulan"
-            src="about:blank"
-            class="w-full border-0
-                   h-[520px] sm:h-[560px] md:aspect-[16/9] md:h-auto"
-            loading="eager"
-            referrerpolicy="no-referrer"
-          ></iframe>
+      </section>
+      <section class="section container" aria-labelledby="explore-title">
+        <div class="final-cta">
+          <div>
+            <span class="eyebrow">
+              Take a closer look
+            </span>
+            <h2 id="explore-title">
+              Explore Bandulan, layer by layer.
+            </h2>
+            <p>
+              Start with a warung. Discover the neighborhood around it.
+            </p>
+          </div>
+          <a class="button button-primary" href="map/">
+            Explore Interactive Map
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#arrow"/>
+            </svg>
+          </a>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <span>
+          Bandulan Warung GIS · A geospatial portfolio project
+        </span>
+        <div class="footer-links">
+          <a href="https://github.com/Freddy47588/bandulan-warung-gis">
+            GitHub
+          </a>
+          <a href="https://qgis.org/">
+            QGIS
+          </a>
+          <a href="https://leafletjs.com/">
+            Leaflet
+          </a>
+          <a href="https://www.openstreetmap.org/copyright">
+            © OpenStreetMap contributors
+          </a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ====== FOOTER ====== -->
-  <footer class="border-t border-white/10 bg-slate-950">
-    <div class="mx-auto max-w-6xl px-4 py-10">
-      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p class="text-sm font-semibold">Disusun oleh: Fredi Irawan (23201276)</p>
-          <p class="text-sm text-slate-300">Institut Teknologi dan Bisnis Asia Malang</p>
-        </div>
-
-        <a
-          href="#"
-          onclick="scrollToTop(event)"
-          class="inline-flex items-center gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-        >
-          Kembali ke Atas
-          <span aria-hidden="true">↑</span>
-        </a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ====== SCRIPT ====== -->
-  <script>
-    function initLinks() {
-      const ids = [
-        "btnKePetaTop",
-        "btnKePetaHero",
-        "btnKePetaPreview",
-        "btnKePetaLayout",
-        "btnKePetaMobile",
-        "btnKePetaCardMobile",
-        "btnKePetaPreviewMini",
-      ];
-
-      ids.forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) el.href = WEB_PETA_URL;
-      });
-
-      // AUTO LOAD preview
-      const iframe = document.getElementById("iframePeta");
-      if (iframe) iframe.src = WEB_PETA_URL;
-    }
-
-    function scrollToPreview() {
-      const el = document.getElementById("preview");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    function scrollToTop(e) {
-      if (e) e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    // Mobile nav helpers (optimasi UX mobile)
-    function closeMobileNav() {
-      const mobileNav = document.getElementById("mobileNav");
-      const btnMenu = document.getElementById("btnMenu");
-      if (mobileNav) mobileNav.classList.add("hidden");
-      if (btnMenu) btnMenu.setAttribute("aria-expanded", "false");
-    }
-
-    // Mobile menu toggle
-    (function setupMobileNav() {
-      const btnMenu = document.getElementById("btnMenu");
-      const mobileNav = document.getElementById("mobileNav");
-      if (!btnMenu || !mobileNav) return;
-
-      btnMenu.addEventListener("click", () => {
-        const isHidden = mobileNav.classList.toggle("hidden");
-        btnMenu.setAttribute("aria-expanded", String(!isHidden));
-      });
-
-      // Auto close menu when click a link
-      mobileNav.querySelectorAll("a").forEach((a) => {
-        a.addEventListener("click", () => closeMobileNav());
-      });
-
-      // Close when tap outside (biar feels native)
-      document.addEventListener("click", (e) => {
-        const target = e.target;
-        const clickedInside = mobileNav.contains(target) || btnMenu.contains(target);
-        if (!clickedInside) closeMobileNav();
-      });
-    })();
-
-    initLinks();
-  </script>
-</body>
+    </footer>
+  </body>
 </html>
